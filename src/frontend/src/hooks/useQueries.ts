@@ -1,12 +1,13 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useActor } from './useActor';
-import type { UserProfile, ApprovalStatus, UserRole } from '../backend';
+import { useInternetIdentity } from './useInternetIdentity';
+import type { Profile, ApprovalStatus, UserRole, PaymentRequestInput, PaymentStatusUpdate, CreatePostRequest, UserPlan } from '../backend';
 import { Principal } from '@dfinity/principal';
 
 export function useGetCallerUserProfile() {
   const { actor, isFetching: actorFetching } = useActor();
 
-  const query = useQuery<UserProfile | null>({
+  const query = useQuery<Profile | null>({
     queryKey: ['currentUserProfile'],
     queryFn: async () => {
       if (!actor) throw new Error('Actor not available');
@@ -28,7 +29,7 @@ export function useSaveCallerUserProfile() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (profile: UserProfile) => {
+    mutationFn: async (profile: Profile) => {
       if (!actor) throw new Error('Actor not available');
       return actor.saveCallerUserProfile(profile);
     },
@@ -131,7 +132,124 @@ export function useAssignCallerUserRole() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['approvals'] });
-      queryClient.invalidateQueries({ queryKey: ['userRole'] });
+    },
+  });
+}
+
+export function useGetAllPosts() {
+  const { actor, isFetching: actorFetching } = useActor();
+
+  return useQuery({
+    queryKey: ['posts', 'all'],
+    queryFn: async () => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.getAllPosts();
+    },
+    enabled: !!actor && !actorFetching,
+  });
+}
+
+export function useGetFollowingPosts() {
+  const { actor, isFetching: actorFetching } = useActor();
+
+  return useQuery({
+    queryKey: ['posts', 'following'],
+    queryFn: async () => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.getFollowingPosts();
+    },
+    enabled: !!actor && !actorFetching,
+  });
+}
+
+export function useCreatePost() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (request: CreatePostRequest) => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.createPost(request);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['posts'] });
+    },
+  });
+}
+
+export function useSubmitPaymentRequest() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (input: PaymentRequestInput) => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.submitPaymentRequest(input);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['paymentRequests'] });
+    },
+  });
+}
+
+export function useGetAllPaymentRequests() {
+  const { actor, isFetching: actorFetching } = useActor();
+
+  return useQuery({
+    queryKey: ['paymentRequests'],
+    queryFn: async () => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.getAllPaymentRequests();
+    },
+    enabled: !!actor && !actorFetching,
+  });
+}
+
+export function useUpdatePaymentStatus() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (update: PaymentStatusUpdate) => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.updatePaymentStatus(update);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['paymentRequests'] });
+    },
+  });
+}
+
+export function useGetCallerUserPlan() {
+  const { actor, isFetching: actorFetching } = useActor();
+  const { identity } = useInternetIdentity();
+
+  return useQuery<UserPlan | null>({
+    queryKey: ['callerUserPlan'],
+    queryFn: async () => {
+      if (!actor || !identity) return null;
+      const principal = identity.getPrincipal();
+      return actor.getUserPlan(principal);
+    },
+    enabled: !!actor && !actorFetching && !!identity,
+    retry: false,
+  });
+}
+
+export function useUpiAutoApprove() {
+  const { actor } = useActor();
+  const { identity } = useInternetIdentity();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ planId }: { planId: string }) => {
+      if (!actor) throw new Error('Actor not available');
+      if (!identity) throw new Error('Identity not available');
+      const principal = identity.getPrincipal();
+      return actor.upiAutoApprove(principal, planId);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['callerUserPlan'] });
     },
   });
 }

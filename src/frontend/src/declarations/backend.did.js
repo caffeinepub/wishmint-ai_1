@@ -24,11 +24,65 @@ export const UserRole = IDL.Variant({
   'user' : IDL.Null,
   'guest' : IDL.Null,
 });
-export const UserProfile = IDL.Record({
+export const PlanInput = IDL.Record({
+  'features' : IDL.Vec(IDL.Text),
+  'planId' : IDL.Text,
+  'name' : IDL.Text,
+  'validityDays' : IDL.Nat,
+  'price' : IDL.Nat,
+});
+export const CreatePostRequest = IDL.Record({
+  'profileCategory' : IDL.Opt(IDL.Text),
+  'title' : IDL.Opt(IDL.Text),
+  'content' : IDL.Text,
+  'tags' : IDL.Vec(IDL.Text),
+  'professional' : IDL.Bool,
+});
+export const PaymentStatus = IDL.Variant({
+  'pending' : IDL.Null,
+  'approved' : IDL.Null,
+  'rejected' : IDL.Null,
+});
+export const Time = IDL.Int;
+export const ExternalBlob = IDL.Vec(IDL.Nat8);
+export const PaymentRequest = IDL.Record({
+  'status' : PaymentStatus,
+  'requestId' : IDL.Nat,
+  'planId' : IDL.Text,
+  'user' : IDL.Principal,
+  'timestamp' : Time,
+  'screenshot' : IDL.Opt(ExternalBlob),
+  'transactionId' : IDL.Text,
+});
+export const Plan = IDL.Record({
+  'features' : IDL.Vec(IDL.Text),
+  'planId' : IDL.Text,
+  'name' : IDL.Text,
+  'validityDays' : IDL.Nat,
+  'price' : IDL.Nat,
+});
+export const Profile = IDL.Record({
   'bio' : IDL.Text,
   'username' : IDL.Text,
   'name' : IDL.Text,
   'category' : IDL.Opt(IDL.Text),
+});
+export const CommunityPost = IDL.Record({
+  'profileCategory' : IDL.Opt(IDL.Text),
+  'title' : IDL.Opt(IDL.Text),
+  'content' : IDL.Text,
+  'tags' : IDL.Vec(IDL.Text),
+  'author' : IDL.Principal,
+  'professional' : IDL.Bool,
+  'timestamp' : Time,
+  'authorProfile' : Profile,
+  'postId' : IDL.Nat,
+});
+export const UserPlan = IDL.Record({
+  'purchaseDate' : Time,
+  'expiryDate' : Time,
+  'plan' : Plan,
+  'isActive' : IDL.Bool,
 });
 export const ApprovalStatus = IDL.Variant({
   'pending' : IDL.Null,
@@ -38,6 +92,22 @@ export const ApprovalStatus = IDL.Variant({
 export const UserApprovalInfo = IDL.Record({
   'status' : ApprovalStatus,
   'principal' : IDL.Principal,
+});
+export const PaymentRequestInput = IDL.Record({
+  'planId' : IDL.Text,
+  'screenshot' : IDL.Opt(ExternalBlob),
+  'transactionId' : IDL.Text,
+});
+export const PaymentStatusUpdate = IDL.Record({
+  'requestId' : IDL.Nat,
+  'newStatus' : PaymentStatus,
+});
+export const PlanUpdateInput = IDL.Record({
+  'features' : IDL.Opt(IDL.Vec(IDL.Text)),
+  'planId' : IDL.Text,
+  'name' : IDL.Opt(IDL.Text),
+  'validityDays' : IDL.Opt(IDL.Nat),
+  'price' : IDL.Opt(IDL.Nat),
 });
 
 export const idlService = IDL.Service({
@@ -68,22 +138,31 @@ export const idlService = IDL.Service({
     ),
   '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
   '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
+  'activateUserPlan' : IDL.Func([IDL.Principal, IDL.Text], [], []),
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
-  'getAllUserProfiles' : IDL.Func([], [IDL.Vec(UserProfile)], ['query']),
-  'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
+  'createPlan' : IDL.Func([PlanInput], [], []),
+  'createPost' : IDL.Func([CreatePostRequest], [], []),
+  'getAllPaymentRequests' : IDL.Func([], [IDL.Vec(PaymentRequest)], ['query']),
+  'getAllPlans' : IDL.Func([], [IDL.Vec(Plan)], ['query']),
+  'getAllPosts' : IDL.Func([], [IDL.Vec(CommunityPost)], ['query']),
+  'getAllUserProfiles' : IDL.Func([], [IDL.Vec(Profile)], ['query']),
+  'getCallerUserProfile' : IDL.Func([], [IDL.Opt(Profile)], ['query']),
   'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
-  'getUserProfile' : IDL.Func(
-      [IDL.Principal],
-      [IDL.Opt(UserProfile)],
-      ['query'],
-    ),
+  'getFollowingPosts' : IDL.Func([], [IDL.Vec(CommunityPost)], ['query']),
+  'getPlan' : IDL.Func([IDL.Text], [IDL.Opt(Plan)], ['query']),
+  'getUserPlan' : IDL.Func([IDL.Principal], [IDL.Opt(UserPlan)], ['query']),
+  'getUserProfile' : IDL.Func([IDL.Principal], [IDL.Opt(Profile)], ['query']),
   'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
   'isCallerApproved' : IDL.Func([], [IDL.Bool], ['query']),
   'listApprovals' : IDL.Func([], [IDL.Vec(UserApprovalInfo)], ['query']),
   'requestApproval' : IDL.Func([], [], []),
-  'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
+  'saveCallerUserProfile' : IDL.Func([Profile], [], []),
   'setApproval' : IDL.Func([IDL.Principal, ApprovalStatus], [], []),
+  'submitPaymentRequest' : IDL.Func([PaymentRequestInput], [IDL.Nat], []),
+  'updatePaymentStatus' : IDL.Func([PaymentStatusUpdate], [], []),
+  'updatePlan' : IDL.Func([PlanUpdateInput], [], []),
   'upgradeRole' : IDL.Func([IDL.Principal, UserRole], [], []),
+  'upiAutoApprove' : IDL.Func([IDL.Principal, IDL.Text], [], []),
 });
 
 export const idlInitArgs = [];
@@ -105,11 +184,65 @@ export const idlFactory = ({ IDL }) => {
     'user' : IDL.Null,
     'guest' : IDL.Null,
   });
-  const UserProfile = IDL.Record({
+  const PlanInput = IDL.Record({
+    'features' : IDL.Vec(IDL.Text),
+    'planId' : IDL.Text,
+    'name' : IDL.Text,
+    'validityDays' : IDL.Nat,
+    'price' : IDL.Nat,
+  });
+  const CreatePostRequest = IDL.Record({
+    'profileCategory' : IDL.Opt(IDL.Text),
+    'title' : IDL.Opt(IDL.Text),
+    'content' : IDL.Text,
+    'tags' : IDL.Vec(IDL.Text),
+    'professional' : IDL.Bool,
+  });
+  const PaymentStatus = IDL.Variant({
+    'pending' : IDL.Null,
+    'approved' : IDL.Null,
+    'rejected' : IDL.Null,
+  });
+  const Time = IDL.Int;
+  const ExternalBlob = IDL.Vec(IDL.Nat8);
+  const PaymentRequest = IDL.Record({
+    'status' : PaymentStatus,
+    'requestId' : IDL.Nat,
+    'planId' : IDL.Text,
+    'user' : IDL.Principal,
+    'timestamp' : Time,
+    'screenshot' : IDL.Opt(ExternalBlob),
+    'transactionId' : IDL.Text,
+  });
+  const Plan = IDL.Record({
+    'features' : IDL.Vec(IDL.Text),
+    'planId' : IDL.Text,
+    'name' : IDL.Text,
+    'validityDays' : IDL.Nat,
+    'price' : IDL.Nat,
+  });
+  const Profile = IDL.Record({
     'bio' : IDL.Text,
     'username' : IDL.Text,
     'name' : IDL.Text,
     'category' : IDL.Opt(IDL.Text),
+  });
+  const CommunityPost = IDL.Record({
+    'profileCategory' : IDL.Opt(IDL.Text),
+    'title' : IDL.Opt(IDL.Text),
+    'content' : IDL.Text,
+    'tags' : IDL.Vec(IDL.Text),
+    'author' : IDL.Principal,
+    'professional' : IDL.Bool,
+    'timestamp' : Time,
+    'authorProfile' : Profile,
+    'postId' : IDL.Nat,
+  });
+  const UserPlan = IDL.Record({
+    'purchaseDate' : Time,
+    'expiryDate' : Time,
+    'plan' : Plan,
+    'isActive' : IDL.Bool,
   });
   const ApprovalStatus = IDL.Variant({
     'pending' : IDL.Null,
@@ -119,6 +252,22 @@ export const idlFactory = ({ IDL }) => {
   const UserApprovalInfo = IDL.Record({
     'status' : ApprovalStatus,
     'principal' : IDL.Principal,
+  });
+  const PaymentRequestInput = IDL.Record({
+    'planId' : IDL.Text,
+    'screenshot' : IDL.Opt(ExternalBlob),
+    'transactionId' : IDL.Text,
+  });
+  const PaymentStatusUpdate = IDL.Record({
+    'requestId' : IDL.Nat,
+    'newStatus' : PaymentStatus,
+  });
+  const PlanUpdateInput = IDL.Record({
+    'features' : IDL.Opt(IDL.Vec(IDL.Text)),
+    'planId' : IDL.Text,
+    'name' : IDL.Opt(IDL.Text),
+    'validityDays' : IDL.Opt(IDL.Nat),
+    'price' : IDL.Opt(IDL.Nat),
   });
   
   return IDL.Service({
@@ -149,22 +298,35 @@ export const idlFactory = ({ IDL }) => {
       ),
     '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
     '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
+    'activateUserPlan' : IDL.Func([IDL.Principal, IDL.Text], [], []),
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
-    'getAllUserProfiles' : IDL.Func([], [IDL.Vec(UserProfile)], ['query']),
-    'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
-    'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
-    'getUserProfile' : IDL.Func(
-        [IDL.Principal],
-        [IDL.Opt(UserProfile)],
+    'createPlan' : IDL.Func([PlanInput], [], []),
+    'createPost' : IDL.Func([CreatePostRequest], [], []),
+    'getAllPaymentRequests' : IDL.Func(
+        [],
+        [IDL.Vec(PaymentRequest)],
         ['query'],
       ),
+    'getAllPlans' : IDL.Func([], [IDL.Vec(Plan)], ['query']),
+    'getAllPosts' : IDL.Func([], [IDL.Vec(CommunityPost)], ['query']),
+    'getAllUserProfiles' : IDL.Func([], [IDL.Vec(Profile)], ['query']),
+    'getCallerUserProfile' : IDL.Func([], [IDL.Opt(Profile)], ['query']),
+    'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
+    'getFollowingPosts' : IDL.Func([], [IDL.Vec(CommunityPost)], ['query']),
+    'getPlan' : IDL.Func([IDL.Text], [IDL.Opt(Plan)], ['query']),
+    'getUserPlan' : IDL.Func([IDL.Principal], [IDL.Opt(UserPlan)], ['query']),
+    'getUserProfile' : IDL.Func([IDL.Principal], [IDL.Opt(Profile)], ['query']),
     'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
     'isCallerApproved' : IDL.Func([], [IDL.Bool], ['query']),
     'listApprovals' : IDL.Func([], [IDL.Vec(UserApprovalInfo)], ['query']),
     'requestApproval' : IDL.Func([], [], []),
-    'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
+    'saveCallerUserProfile' : IDL.Func([Profile], [], []),
     'setApproval' : IDL.Func([IDL.Principal, ApprovalStatus], [], []),
+    'submitPaymentRequest' : IDL.Func([PaymentRequestInput], [IDL.Nat], []),
+    'updatePaymentStatus' : IDL.Func([PaymentStatusUpdate], [], []),
+    'updatePlan' : IDL.Func([PlanUpdateInput], [], []),
     'upgradeRole' : IDL.Func([IDL.Principal, UserRole], [], []),
+    'upiAutoApprove' : IDL.Func([IDL.Principal, IDL.Text], [], []),
   });
 };
 

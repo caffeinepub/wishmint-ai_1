@@ -19,6 +19,7 @@ import LegalPrivacyPage from './pages/LegalPrivacyPage';
 import LegalTermsPage from './pages/LegalTermsPage';
 import LegalRefundPage from './pages/LegalRefundPage';
 import AdminPage from './pages/AdminPage';
+import CommunityPage from './pages/CommunityPage';
 import NotFoundPage from './pages/NotFoundPage';
 
 const rootRoute = createRootRoute({
@@ -133,6 +134,12 @@ const adminRoute = createRoute({
   component: AdminPage,
 });
 
+const communityRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/community',
+  component: CommunityPage,
+});
+
 const notFoundRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '*',
@@ -158,6 +165,7 @@ const routeTree = rootRoute.addChildren([
   termsRoute,
   refundRoute,
   adminRoute,
+  communityRoute,
   notFoundRoute,
 ]);
 

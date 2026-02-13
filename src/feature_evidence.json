@@ -2,8 +2,31 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-add-a-upi-app-redirect-deep-link-in-the-plan-upgrade-payment-flow-so-that-when-a-user-chooses-to-upgrade-and-clicks-the-payment-option-the-app-opens-the-user-s-installed-upi-app-to-complete-the-payment-using-the-existing-upi-id-6205684456-axl-then-returns-the-user-back-to-the-billing-page-to-continue-the-existing-proof-upload-pending-approval-flow",
-      "featureTitle": "Add a UPI app redirect (deep-link) in the plan upgrade payment flow so that when a user chooses to upgrade and clicks the payment option, the app opens the user’s installed UPI app to complete the payment using the existing UPI ID 6205684456@axl, then returns the user back to the Billing page to continue the existing proof upload / pending approval flow.",
+      "featureId": "feature-update-the-pricing-billing-upgrade-navigation-so-billingpage-knows-which-plan-tier-and-billing-period-the-user-selected-pro-business-and-monthly-yearly-using-url-parameters-and-english-user-facing-text",
+      "featureTitle": "Update the Pricing → Billing upgrade navigation so BillingPage knows which plan tier and billing period the user selected (Pro/Business and Monthly/Yearly), using URL parameters and English user-facing text.",
+      "files": [
+        "frontend/src/pages/BillingPage.tsx",
+        "frontend/src/pages/PricingPage.tsx",
+        "frontend/src/utils/urlParams.ts"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "blob-storage@4.0.0",
+        "user-approval@3.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-43"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-update-the-upi-deep-link-on-billingpage-so-clicking-the-payment-option-opens-the-user-s-installed-upi-app-with-the-exact-plan-amount-prefilled-am-and-a-clear-transaction-note-tn-using-upi-id-6205684456-axl-and-currency-inr",
+      "featureTitle": "Update the UPI deep-link on BillingPage so clicking the payment option opens the user’s installed UPI app with the exact plan amount prefilled (am) and a clear transaction note (tn), using UPI ID 6205684456@axl and currency INR.",
       "files": [
         "frontend/src/pages/BillingPage.tsx"
       ],
@@ -18,16 +41,17 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-26"
+        "REQ-44"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-update-the-create-studio-generate-designs-action-so-that-after-the-user-clicks-generate-designs-and-generation-completes-generated-design-images-are-rendered-in-the-results-area-replacing-the-current-placeholder-message-with-at-least-one-visible-preview-image-displayed",
-      "featureTitle": "Update the Create Studio Generate Designs action so that after the user clicks \"Generate Designs\" and generation completes, generated design images are rendered in the results area (replacing the current placeholder message), with at least one visible preview image displayed.",
+      "featureId": "feature-implement-an-automatic-upi-upgrade-flow-when-a-logged-in-user-clicks-pay-with-upi-create-a-backend-payment-request-tied-to-the-selected-plan-and-amount-include-its-reference-in-the-upi-intent-and-automatically-approve-activate-the-plan-within-1-minute-without-requiring-manual-admin-approval",
+      "featureTitle": "Implement an automatic UPI upgrade flow: when a logged-in user clicks “Pay with UPI”, create a backend payment request tied to the selected plan and amount, include its reference in the UPI intent, and automatically approve/activate the plan within ~1 minute (without requiring manual admin approval).",
       "files": [
-        "frontend/src/pages/CreateStudioPage.tsx",
-        "frontend/src/utils/designPreview.ts"
+        "frontend/src/components/billing/ManualUpiPaymentRequestDialog.tsx",
+        "frontend/src/hooks/useQueries.ts",
+        "frontend/src/pages/BillingPage.tsx"
       ],
       "components": [
         "authorization@4.0.0",
@@ -40,7 +64,31 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-27"
+        "REQ-45"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-backend-plan-persistence-and-a-frontend-query-hook-so-plan-gating-is-driven-by-backend-state-after-auto-approval-instead-of-relying-only-on-the-persisted-frontend-zustand-planstore",
+      "featureTitle": "Add backend plan persistence and a frontend query hook so plan gating is driven by backend state after auto-approval (instead of relying only on the persisted frontend Zustand planStore).",
+      "files": [
+        "frontend/src/components/layout/AppLayout.tsx",
+        "frontend/src/hooks/useQueries.ts",
+        "frontend/src/pages/BillingPage.tsx",
+        "frontend/src/state/planStore.ts"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "blob-storage@4.0.0",
+        "user-approval@3.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-46"
       ],
       "confidence": "high"
     }

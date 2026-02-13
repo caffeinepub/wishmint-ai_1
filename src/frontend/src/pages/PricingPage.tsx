@@ -20,12 +20,16 @@ export default function PricingPage() {
   const navigate = useNavigate();
   const { identity, login } = useInternetIdentity();
 
-  const handleUpgrade = (plan: string) => {
+  const handleUpgrade = (tier: 'pro' | 'business') => {
     if (!identity) {
       login();
       return;
     }
-    navigate({ to: '/billing' });
+    const billingPeriod = isYearly ? 'yearly' : 'monthly';
+    navigate({ 
+      to: '/billing',
+      search: { tier, period: billingPeriod }
+    });
   };
 
   return (

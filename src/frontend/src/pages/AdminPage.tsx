@@ -1,6 +1,7 @@
 import { usePageMeta } from '../hooks/usePageMeta';
 import { useIsCallerAdmin, useListApprovals, useSetApproval } from '../hooks/useQueries';
 import AccessDeniedScreen from '../components/auth/AccessDeniedScreen';
+import PaymentRequestsCard from '../components/admin/PaymentRequestsCard';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -193,17 +194,7 @@ export default function AdminPage() {
           </TabsContent>
 
           <TabsContent value="payments" className="mt-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Payment Verification</CardTitle>
-                <CardDescription>Review manual UPI payment submissions</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-center text-muted-foreground py-8">
-                  Payment verification coming soon...
-                </p>
-              </CardContent>
-            </Card>
+            <PaymentRequestsCard />
           </TabsContent>
 
           <TabsContent value="reports" className="mt-6">

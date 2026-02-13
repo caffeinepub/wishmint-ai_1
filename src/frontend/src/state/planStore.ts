@@ -9,6 +9,7 @@ interface PlanState {
   billingPeriod: BillingPeriod;
   setPlan: (tier: PlanTier) => void;
   setBillingPeriod: (period: BillingPeriod) => void;
+  syncPlanFromBackend: (tier: PlanTier, period: BillingPeriod) => void;
 }
 
 export const usePlanStore = create<PlanState>()(
@@ -18,6 +19,7 @@ export const usePlanStore = create<PlanState>()(
       billingPeriod: 'monthly',
       setPlan: (tier) => set({ tier }),
       setBillingPeriod: (period) => set({ billingPeriod: period }),
+      syncPlanFromBackend: (tier, period) => set({ tier, billingPeriod: period }),
     }),
     {
       name: 'wishmint-plan-storage',

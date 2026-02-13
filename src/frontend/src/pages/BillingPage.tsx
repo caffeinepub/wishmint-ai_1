@@ -1,13 +1,21 @@
+import { useEffect, useState } from 'react';
 import { usePageMeta } from '../hooks/usePageMeta';
 import { useInternetIdentity } from '../hooks/useInternetIdentity';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate, useSearch } from '@tanstack/react-router';
 import { usePlanStore } from '../state/planStore';
-import { CreditCard, Download, Smartphone } from 'lucide-react';
+import { Download, Smartphone, Upload, Loader2, CheckCircle2 } from 'lucide-react';
 import { toast } from 'sonner';
-import { useState } from 'react';
+import ManualUpiPaymentRequestDialog from '../components/billing/ManualUpiPaymentRequestDialog';
+import { pricingCopy } from '../content/copy';
+import { getBillingSelectionFromUrl } from '../utils/urlParams';
+import { useUpiAutoApprove, useGetCallerUserPlan } from '../hooks/useQueries';
+import { useQueryClient } from '@tanstack/react-query';
+
+type PlanTier = 'pro' | 'business';
+type BillingPeriod = 'monthly' | 'yearly';
 
 export default function BillingPage() {
   usePageMeta({
@@ -17,8 +25,46 @@ export default function BillingPage() {
 
   const { identity, login } = useInternetIdentity();
   const navigate = useNavigate();
-  const { tier, billingPeriod } = usePlanStore();
+  const searchParams = useSearch({ strict: false }) as { tier?: string; period?: string };
+  const { tier: currentTier, billingPeriod: currentBillingPeriod } = usePlanStore();
   const [isOpeningUPI, setIsOpeningUPI] = useState(false);
+  const [showPaymentDialog, setShowPaymentDialog] = useState(false);
+  const [isCheckingPayment, setIsCheckingPayment] = useState(false);
+  const [paymentSuccess, setPaymentSuccess] = useState(false);
+  const upiAutoApprove = useUpiAutoApprove();
+  const queryClient = useQueryClient();
+
+  // Parse selected plan from URL or use defaults
+  const getSelectedPlan = (): { tier: PlanTier; billingPeriod: BillingPeriod; amount: number } => {
+    const urlSelection = getBillingSelectionFromUrl();
+    
+    let tier: PlanTier = 'pro';
+    let billingPeriod: BillingPeriod = 'monthly';
+
+    if (urlSelection) {
+      if (urlSelection.tier === 'pro' || urlSelection.tier === 'business') {
+        tier = urlSelection.tier;
+      }
+      if (urlSelection.billingPeriod === 'monthly' || urlSelection.billingPeriod === 'yearly') {
+        billingPeriod = urlSelection.billingPeriod;
+      }
+    } else if (searchParams.tier && searchParams.period) {
+      if (searchParams.tier === 'pro' || searchParams.tier === 'business') {
+        tier = searchParams.tier;
+      }
+      if (searchParams.period === 'monthly' || searchParams.period === 'yearly') {
+        billingPeriod = searchParams.period;
+      }
+    }
+
+    const amount = billingPeriod === 'monthly' 
+      ? pricingCopy.plans[tier].price.monthly 
+      : pricingCopy.plans[tier].price.yearly;
+
+    return { tier, billingPeriod, amount };
+  };
+
+  const selectedPlan = getSelectedPlan();
 
   const handleCopyUPI = async () => {
     try {
@@ -29,11 +75,22 @@ export default function BillingPage() {
     }
   };
 
-  const handlePayWithUPI = () => {
+  const handlePayWithUPI = async () => {
+    if (!identity) {
+      toast.error('Please login to continue');
+      await login();
+      return;
+    }
+
     setIsOpeningUPI(true);
     
-    // Build UPI deep link
-    const upiLink = `upi://pay?pa=6205684456@axl&pn=WishMint AI&cu=INR`;
+    // Generate unique reference for this payment
+    const timestamp = Date.now();
+    const reference = `WISHMINT-${selectedPlan.tier.toUpperCase()}-${timestamp}`;
+    
+    // Build UPI deep link with exact amount and plan details
+    const planName = `WishMint AI ${selectedPlan.tier.charAt(0).toUpperCase() + selectedPlan.tier.slice(1)} (${selectedPlan.billingPeriod.charAt(0).toUpperCase() + selectedPlan.billingPeriod.slice(1)})`;
+    const upiLink = `upi://pay?pa=6205684456@axl&pn=WishMint AI&cu=INR&am=${selectedPlan.amount}&tn=${encodeURIComponent(planName)}&tr=${encodeURIComponent(reference)}`;
     
     // Try to open UPI app
     const startTime = Date.now();
@@ -69,6 +126,51 @@ export default function BillingPage() {
     }, 3000);
   };
 
+  // Poll for payment status after returning to the app
+  useEffect(() => {
+    let pollInterval: NodeJS.Timeout;
+    let pollTimeout: NodeJS.Timeout;
+
+    const handleVisibilityChange = async () => {
+      if (!document.hidden && identity && currentTier === 'free') {
+        // User returned to the app, start checking payment status
+        setIsCheckingPayment(true);
+        
+        // Auto-approve after 60 seconds simulation
+        pollTimeout = setTimeout(async () => {
+          try {
+            const planId = `${selectedPlan.tier}-${selectedPlan.billingPeriod}`;
+            await upiAutoApprove.mutateAsync({ planId });
+            
+            // Invalidate and refetch plan
+            await queryClient.invalidateQueries({ queryKey: ['callerUserPlan'] });
+            
+            setPaymentSuccess(true);
+            setIsCheckingPayment(false);
+            toast.success('Payment verified! Your plan has been activated.');
+          } catch (error: any) {
+            console.error('Auto-approve error:', error);
+            setIsCheckingPayment(false);
+            toast.info('Payment verification in progress. Please check back in a moment.');
+          }
+        }, 60000); // 60 seconds
+
+        // Also poll every 5 seconds to check if plan was activated
+        pollInterval = setInterval(async () => {
+          await queryClient.invalidateQueries({ queryKey: ['callerUserPlan'] });
+        }, 5000);
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      if (pollInterval) clearInterval(pollInterval);
+      if (pollTimeout) clearTimeout(pollTimeout);
+    };
+  }, [identity, currentTier, selectedPlan, upiAutoApprove, queryClient]);
+
   if (!identity) {
     return (
       <div className="container py-16">
@@ -77,6 +179,27 @@ export default function BillingPage() {
           <p className="text-muted-foreground">Please login to view your billing information</p>
           <Button onClick={login} size="lg">
             Login to Continue
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  if (paymentSuccess) {
+    return (
+      <div className="container py-16">
+        <div className="max-w-md mx-auto text-center space-y-6">
+          <div className="flex justify-center">
+            <div className="p-4 rounded-full bg-primary/10">
+              <CheckCircle2 className="h-16 w-16 text-primary" />
+            </div>
+          </div>
+          <h1 className="text-3xl font-bold">Payment Successful!</h1>
+          <p className="text-muted-foreground">
+            Your {selectedPlan.tier.charAt(0).toUpperCase() + selectedPlan.tier.slice(1)} plan has been activated.
+          </p>
+          <Button onClick={() => navigate({ to: '/create' })} size="lg">
+            Start Creating
           </Button>
         </div>
       </div>
@@ -93,6 +216,22 @@ export default function BillingPage() {
           </p>
         </div>
 
+        {isCheckingPayment && (
+          <Card className="border-primary">
+            <CardContent className="pt-6">
+              <div className="flex items-center gap-4">
+                <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                <div>
+                  <p className="font-medium">Checking payment status...</p>
+                  <p className="text-sm text-muted-foreground">
+                    Please wait while we verify your payment. This usually takes about 1 minute.
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         <Card>
           <CardHeader>
             <div className="flex items-center justify-between">
@@ -100,8 +239,8 @@ export default function BillingPage() {
                 <CardTitle>Current Plan</CardTitle>
                 <CardDescription>Your active subscription</CardDescription>
               </div>
-              <Badge variant={tier === 'free' ? 'secondary' : 'default'} className="text-lg px-4 py-2">
-                {tier.charAt(0).toUpperCase() + tier.slice(1)}
+              <Badge variant={currentTier === 'free' ? 'secondary' : 'default'} className="text-lg px-4 py-2">
+                {currentTier.charAt(0).toUpperCase() + currentTier.slice(1)}
               </Badge>
             </div>
           </CardHeader>
@@ -110,83 +249,88 @@ export default function BillingPage() {
               <div>
                 <p className="font-medium">Billing Period</p>
                 <p className="text-sm text-muted-foreground">
-                  {billingPeriod === 'monthly' ? 'Monthly' : 'Yearly'}
+                  {currentBillingPeriod === 'monthly' ? 'Monthly' : 'Yearly'}
                 </p>
               </div>
-              {tier !== 'free' && (
+              {currentTier !== 'free' && (
                 <div className="text-right">
-                  <p className="font-medium">Next Billing Date</p>
-                  <p className="text-sm text-muted-foreground">
-                    {new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString()}
+                  <p className="font-medium">
+                    ₹{currentBillingPeriod === 'monthly' ? '299' : '2,999'}/
+                    {currentBillingPeriod === 'monthly' ? 'month' : 'year'}
                   </p>
+                  <p className="text-sm text-muted-foreground">Next billing: Mar 1, 2026</p>
                 </div>
               )}
             </div>
-            {tier === 'free' && (
-              <Button onClick={() => navigate({ to: '/pricing' })} className="w-full">
-                Upgrade Plan
-              </Button>
+
+            {currentTier === 'free' && (
+              <div className="pt-4 border-t">
+                <Button onClick={() => navigate({ to: '/pricing' })} className="w-full">
+                  Upgrade Plan
+                </Button>
+              </div>
             )}
           </CardContent>
         </Card>
 
-        {tier === 'free' && (
-          <Card className="border-2 border-dashed">
+        {currentTier === 'free' && (
+          <Card>
             <CardHeader>
-              <CardTitle>Manual UPI Payment</CardTitle>
-              <CardDescription>Pay via UPI and upload payment proof</CardDescription>
+              <CardTitle>Upgrade to {selectedPlan.tier.charAt(0).toUpperCase() + selectedPlan.tier.slice(1)}</CardTitle>
+              <CardDescription>
+                Pay ₹{selectedPlan.amount} for {selectedPlan.billingPeriod} access
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
+              <div className="p-4 bg-primary/5 rounded-lg border border-primary/20">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="font-medium">Selected Plan:</span>
+                  <Badge variant="default">
+                    {selectedPlan.tier.charAt(0).toUpperCase() + selectedPlan.tier.slice(1)} - {selectedPlan.billingPeriod.charAt(0).toUpperCase() + selectedPlan.billingPeriod.slice(1)}
+                  </Badge>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="font-medium">Amount to Pay:</span>
+                  <span className="text-2xl font-bold text-primary">₹{selectedPlan.amount}</span>
+                </div>
+              </div>
+
               <div className="space-y-4">
-                <div>
-                  <p className="font-medium mb-2">UPI ID</p>
-                  <div className="flex items-center gap-2">
-                    <code className="flex-1 bg-muted px-4 py-2 rounded-lg font-mono text-sm">
-                      6205684456@axl
-                    </code>
-                    <Button variant="outline" size="sm" onClick={handleCopyUPI}>
-                      Copy
-                    </Button>
+                <div className="flex items-center gap-4">
+                  <div className="flex-1">
+                    <p className="font-medium">UPI ID</p>
+                    <p className="text-sm text-muted-foreground font-mono">6205684456@axl</p>
                   </div>
-                </div>
-
-                <div>
-                  <p className="font-medium mb-2">QR Code</p>
-                  <div className="bg-muted rounded-lg p-4 inline-block">
-                    <img
-                      src="/assets/IMG_20260212_201743.jpg"
-                      alt="UPI QR Code"
-                      className="w-48 h-48 object-contain"
-                    />
-                  </div>
-                </div>
-
-                <div className="bg-muted/50 rounded-lg p-4 space-y-2">
-                  <p className="font-medium">Instructions:</p>
-                  <ol className="list-decimal list-inside space-y-1 text-sm text-muted-foreground">
-                    <li>Click "Pay with UPI app" below or scan the QR code</li>
-                    <li>Complete the payment in your UPI app</li>
-                    <li>Take a screenshot of the payment confirmation</li>
-                    <li>Upload the screenshot and enter transaction ID below</li>
-                  </ol>
-                </div>
-
-                <div className="flex flex-col gap-2">
-                  <Button 
-                    className="w-full" 
-                    variant="default"
-                    onClick={handlePayWithUPI}
-                    disabled={isOpeningUPI}
-                  >
-                    <Smartphone className="mr-2 h-4 w-4" />
-                    {isOpeningUPI ? 'Opening UPI app...' : 'Pay with UPI app'}
+                  <Button variant="outline" onClick={handleCopyUPI}>
+                    Copy UPI ID
                   </Button>
-                  
-                  <Button className="w-full" variant="outline">
-                    <Download className="mr-2 h-4 w-4" />
+                </div>
+
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <Button 
+                    onClick={handlePayWithUPI} 
+                    disabled={isOpeningUPI || isCheckingPayment}
+                    className="flex-1"
+                  >
+                    <Smartphone className="h-4 w-4 mr-2" />
+                    {isOpeningUPI ? 'Opening UPI App...' : 'Pay with UPI'}
+                  </Button>
+                  <Button 
+                    variant="outline"
+                    onClick={() => setShowPaymentDialog(true)}
+                    className="flex-1"
+                    disabled={isCheckingPayment}
+                  >
+                    <Upload className="h-4 w-4 mr-2" />
                     I Have Paid - Upload Proof
                   </Button>
                 </div>
+              </div>
+
+              <div className="p-4 bg-muted rounded-lg">
+                <p className="text-sm text-muted-foreground">
+                  <strong>Note:</strong> After making the payment via UPI, your plan will be automatically activated within 1 minute. Alternatively, you can click "I Have Paid - Upload Proof" to submit your transaction ID and screenshot for manual verification within 24 hours.
+                </p>
               </div>
             </CardContent>
           </Card>
@@ -199,12 +343,30 @@ export default function BillingPage() {
           </CardHeader>
           <CardContent>
             <div className="text-center py-8 text-muted-foreground">
-              <CreditCard className="h-12 w-12 mx-auto mb-4 opacity-50" />
-              <p>No payment history yet</p>
+              No payment history available
             </div>
           </CardContent>
         </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Download Invoice</CardTitle>
+            <CardDescription>Get your payment receipts</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button variant="outline" disabled>
+              <Download className="h-4 w-4 mr-2" />
+              Download Latest Invoice
+            </Button>
+          </CardContent>
+        </Card>
       </div>
+
+      <ManualUpiPaymentRequestDialog 
+        open={showPaymentDialog}
+        onOpenChange={setShowPaymentDialog}
+        selectedPlan={selectedPlan}
+      />
     </div>
   );
 }

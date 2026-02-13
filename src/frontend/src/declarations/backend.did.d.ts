@@ -13,15 +13,83 @@ import type { Principal } from '@icp-sdk/core/principal';
 export type ApprovalStatus = { 'pending' : null } |
   { 'approved' : null } |
   { 'rejected' : null };
-export interface UserApprovalInfo {
-  'status' : ApprovalStatus,
-  'principal' : Principal,
+export interface CommunityPost {
+  'profileCategory' : [] | [string],
+  'title' : [] | [string],
+  'content' : string,
+  'tags' : Array<string>,
+  'author' : Principal,
+  'professional' : boolean,
+  'timestamp' : Time,
+  'authorProfile' : Profile,
+  'postId' : bigint,
 }
-export interface UserProfile {
+export interface CreatePostRequest {
+  'profileCategory' : [] | [string],
+  'title' : [] | [string],
+  'content' : string,
+  'tags' : Array<string>,
+  'professional' : boolean,
+}
+export type ExternalBlob = Uint8Array;
+export interface PaymentRequest {
+  'status' : PaymentStatus,
+  'requestId' : bigint,
+  'planId' : string,
+  'user' : Principal,
+  'timestamp' : Time,
+  'screenshot' : [] | [ExternalBlob],
+  'transactionId' : string,
+}
+export interface PaymentRequestInput {
+  'planId' : string,
+  'screenshot' : [] | [ExternalBlob],
+  'transactionId' : string,
+}
+export type PaymentStatus = { 'pending' : null } |
+  { 'approved' : null } |
+  { 'rejected' : null };
+export interface PaymentStatusUpdate {
+  'requestId' : bigint,
+  'newStatus' : PaymentStatus,
+}
+export interface Plan {
+  'features' : Array<string>,
+  'planId' : string,
+  'name' : string,
+  'validityDays' : bigint,
+  'price' : bigint,
+}
+export interface PlanInput {
+  'features' : Array<string>,
+  'planId' : string,
+  'name' : string,
+  'validityDays' : bigint,
+  'price' : bigint,
+}
+export interface PlanUpdateInput {
+  'features' : [] | [Array<string>],
+  'planId' : string,
+  'name' : [] | [string],
+  'validityDays' : [] | [bigint],
+  'price' : [] | [bigint],
+}
+export interface Profile {
   'bio' : string,
   'username' : string,
   'name' : string,
   'category' : [] | [string],
+}
+export type Time = bigint;
+export interface UserApprovalInfo {
+  'status' : ApprovalStatus,
+  'principal' : Principal,
+}
+export interface UserPlan {
+  'purchaseDate' : Time,
+  'expiryDate' : Time,
+  'plan' : Plan,
+  'isActive' : boolean,
 }
 export type UserRole = { 'admin' : null } |
   { 'user' : null } |
@@ -54,18 +122,31 @@ export interface _SERVICE {
   >,
   '_caffeineStorageUpdateGatewayPrincipals' : ActorMethod<[], undefined>,
   '_initializeAccessControlWithSecret' : ActorMethod<[string], undefined>,
+  'activateUserPlan' : ActorMethod<[Principal, string], undefined>,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
-  'getAllUserProfiles' : ActorMethod<[], Array<UserProfile>>,
-  'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
+  'createPlan' : ActorMethod<[PlanInput], undefined>,
+  'createPost' : ActorMethod<[CreatePostRequest], undefined>,
+  'getAllPaymentRequests' : ActorMethod<[], Array<PaymentRequest>>,
+  'getAllPlans' : ActorMethod<[], Array<Plan>>,
+  'getAllPosts' : ActorMethod<[], Array<CommunityPost>>,
+  'getAllUserProfiles' : ActorMethod<[], Array<Profile>>,
+  'getCallerUserProfile' : ActorMethod<[], [] | [Profile]>,
   'getCallerUserRole' : ActorMethod<[], UserRole>,
-  'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
+  'getFollowingPosts' : ActorMethod<[], Array<CommunityPost>>,
+  'getPlan' : ActorMethod<[string], [] | [Plan]>,
+  'getUserPlan' : ActorMethod<[Principal], [] | [UserPlan]>,
+  'getUserProfile' : ActorMethod<[Principal], [] | [Profile]>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
   'isCallerApproved' : ActorMethod<[], boolean>,
   'listApprovals' : ActorMethod<[], Array<UserApprovalInfo>>,
   'requestApproval' : ActorMethod<[], undefined>,
-  'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
+  'saveCallerUserProfile' : ActorMethod<[Profile], undefined>,
   'setApproval' : ActorMethod<[Principal, ApprovalStatus], undefined>,
+  'submitPaymentRequest' : ActorMethod<[PaymentRequestInput], bigint>,
+  'updatePaymentStatus' : ActorMethod<[PaymentStatusUpdate], undefined>,
+  'updatePlan' : ActorMethod<[PlanUpdateInput], undefined>,
   'upgradeRole' : ActorMethod<[Principal, UserRole], undefined>,
+  'upiAutoApprove' : ActorMethod<[Principal, string], undefined>,
 }
 export declare const idlService: IDL.ServiceClass;
 export declare const idlInitArgs: IDL.Type[];

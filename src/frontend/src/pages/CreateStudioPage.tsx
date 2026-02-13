@@ -9,7 +9,9 @@ import { Sparkles, Wand2, Smile, Frown, Loader2 } from 'lucide-react';
 import { useState } from 'react';
 import { useInternetIdentity } from '../hooks/useInternetIdentity';
 import { toast } from 'sonner';
-import { generateDesignPreview } from '../utils/designPreview';
+import { generateDesignPreview, applyCustomization } from '../utils/designPreview';
+import { DesignPreview, DesignCustomization } from '../components/createStudio/types';
+import DesignEditorPanel from '../components/createStudio/DesignEditorPanel';
 
 const occasions = [
   'Birthday', 'Anniversary', 'Wedding', 'Engagement', 'Festival', 
@@ -19,12 +21,6 @@ const occasions = [
 
 const tones = ['Emotional', 'Funny', 'Formal', 'Cute', 'Romantic', 'Professional'];
 const languages = ['English', 'Hindi', 'Hinglish'];
-
-interface DesignPreview {
-  id: string;
-  imageUrl: string;
-  title: string;
-}
 
 export default function CreateStudioPage() {
   usePageMeta({
@@ -42,6 +38,7 @@ export default function CreateStudioPage() {
   const [extraDetails, setExtraDetails] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedPreviews, setGeneratedPreviews] = useState<DesignPreview[]>([]);
+  const [editingDesign, setEditingDesign] = useState<DesignPreview | null>(null);
 
   const handleGenerate = async () => {
     if (!identity) {
@@ -74,6 +71,42 @@ export default function CreateStudioPage() {
       setIsGenerating(false);
       toast.success('Designs generated successfully!');
     }, 2000);
+  };
+
+  const handleEditDesign = (design: DesignPreview) => {
+    setEditingDesign(design);
+  };
+
+  const handleCloseEditor = () => {
+    setEditingDesign(null);
+  };
+
+  const handleApplyCustomization = (customization: DesignCustomization) => {
+    if (!editingDesign) return;
+
+    const updatedImageUrl = applyCustomization(
+      editingDesign,
+      {
+        occasion,
+        tone,
+        language,
+        recipientName,
+        senderName,
+        prompt,
+        extraDetails,
+      },
+      customization
+    );
+
+    const updatedPreviews = generatedPreviews.map((preview) =>
+      preview.id === editingDesign.id
+        ? { ...preview, imageUrl: updatedImageUrl, customization }
+        : preview
+    );
+
+    setGeneratedPreviews(updatedPreviews);
+    setEditingDesign(null);
+    toast.success('Design updated successfully!');
   };
 
   return (
@@ -265,7 +298,12 @@ export default function CreateStudioPage() {
                       <div className="absolute bottom-0 left-0 right-0 p-4 text-white transform translate-y-full group-hover:translate-y-0 transition-transform">
                         <p className="font-medium text-sm">{preview.title}</p>
                         <div className="flex gap-2 mt-2">
-                          <Button size="sm" variant="secondary" className="flex-1">
+                          <Button
+                            size="sm"
+                            variant="secondary"
+                            className="flex-1"
+                            onClick={() => handleEditDesign(preview)}
+                          >
                             Edit
                           </Button>
                           <Button size="sm" variant="secondary" className="flex-1">
@@ -281,6 +319,14 @@ export default function CreateStudioPage() {
           </Card>
         )}
       </div>
+
+      {editingDesign && (
+        <DesignEditorPanel
+          design={editingDesign}
+          onClose={handleCloseEditor}
+          onApply={handleApplyCustomization}
+        />
+      )}
     </div>
   );
 }

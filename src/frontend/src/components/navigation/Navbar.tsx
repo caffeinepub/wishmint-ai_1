@@ -11,6 +11,7 @@ const navItems = [
   { label: 'Create', path: '/create' },
   { label: 'Templates', path: '/templates' },
   { label: 'Marketplace', path: '/marketplace' },
+  { label: 'Community', path: '/community' },
   { label: 'Pricing', path: '/pricing' },
   { label: 'Creators', path: '/creators' },
   { label: 'FAQ', path: '/faq' },

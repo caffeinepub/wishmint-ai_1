@@ -1,8 +1,12 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 5,
+  "projectStateVersion": 15,
   "summary": "WishMint AI: a production-ready, premium, responsive web platform to generate AI wish cards/invitations in a Create Studio and run a creator Marketplace (buy/sell templates), with authentication, billing/payments (Razorpay + UPI fallback), creator profiles/followers/views, earnings/withdrawals, admin moderation/approvals, analytics/SEO, and full site copy.",
-  "architectural_notes": [],
+  "architectural_notes": [
+    "GA4 integration requested: add Google tag (gtag.js) site-wide with measurement ID G-XQQQ1HCG24.",
+    "New screenshot-based feature must be gated behind upgraded/paid plans only (plan-based access control; hide/disable for Free users).",
+    "Manual UPI upgrades should support near-real-time activation (~1 minute) by validating the received payment amount against plan pricing (auto-approve/auto-unlock instead of relying solely on admin review)."
+  ],
   "known_issues": [
     "Build attempt failed due to request size/processing limits; may require breaking work into smaller milestones."
   ],
@@ -199,6 +203,142 @@
         "REQ-27"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-wire-the-edit-action-on-each-generated-design-preview-in-create-studio-create-so-it-opens-an-in-app-editor-for-that-specific-generated-design-instead-of-a-no-op-button",
+      "title": "Wire the \"Edit\" action on each generated design preview in Create Studio (/create) so it opens an in-app editor for that specific generated design (instead of a no-op button).",
+      "reqIds": [
+        "REQ-28"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-in-the-create-studio-editor-opened-from-a-generated-design-provide-customization-controls-grouped-into-sections-tabs-for-templates-presets-design-style-texture-background-and-emojis",
+      "title": "In the Create Studio editor opened from a generated design, provide customization controls grouped into sections/tabs for: Templates/Presets, Design/Style, Texture/Background, and Emojis.",
+      "reqIds": [
+        "REQ-29"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-apply-editor-changes-to-the-selected-design-preview-in-real-time-or-on-an-explicit-apply-action-so-users-can-visually-confirm-template-style-texture-emoji-changes-for-that-design",
+      "title": "Apply editor changes to the selected design preview in real time (or on an explicit \"Apply\" action) so users can visually confirm template/style/texture/emoji changes for that design.",
+      "reqIds": [
+        "REQ-30"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-the-provided-google-analytics-ga4-gtag-js-snippet-for-measurement-id-g-xqqq1hcg24-to-the-root-html-document-so-it-loads-on-every-page-of-the-react-app",
+      "title": "Add the provided Google Analytics (GA4) gtag.js snippet for measurement ID G-XQQQ1HCG24 to the root HTML document so it loads on every page of the React app.",
+      "reqIds": [
+        "REQ-31"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-new-community-page-that-matches-the-uploaded-screenshots-header-label-community-title-community-creations-subtitle-share-your-templates-and-stickers-with-the-community-segmented-tabs-for-all-posts-and-following-a-primary-create-post-action-and-an-empty-state-card-when-there-are-no-posts",
+      "title": "Add a new Community page that matches the uploaded screenshots: header label (\"Community\"), title (\"Community Creations\"), subtitle (\"Share your templates and stickers with the community\"), segmented tabs for \"All Posts\" and \"Following\", a primary \"Create Post\" action, and an empty state card when there are no posts.",
+      "reqIds": [
+        "REQ-32"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-site-navigation-to-include-an-entry-point-to-the-new-community-page-desktop-navbar-and-mobile-hamburger-menu-with-english-user-facing-text",
+      "title": "Update site navigation to include an entry point to the new Community page (desktop navbar and mobile hamburger menu) with English user-facing text.",
+      "reqIds": [
+        "REQ-33"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-a-community-create-post-ui-flow-authenticated-users-can-create-a-post-with-at-least-a-post-type-template-or-sticker-b-title-c-description-caption-and-d-an-optional-image-upload-unauthenticated-users-are-prompted-to-log-in-using-internet-identity",
+      "title": "Implement a Community \"Create Post\" UI flow: authenticated users can create a post with at least (a) post type (Template or Sticker), (b) title, (c) description/caption, and (d) an optional image upload; unauthenticated users are prompted to log in using Internet Identity.",
+      "reqIds": [
+        "REQ-34"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-wire-react-query-hooks-for-community-posts-create-list-for-both-tabs-and-add-loading-error-and-retry-states-consistent-with-the-rest-of-the-app",
+      "title": "Wire React Query hooks for Community posts (create + list for both tabs) and add loading, error, and retry states consistent with the rest of the app.",
+      "reqIds": [
+        "REQ-36"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-marketplace-page-ui-to-match-the-uploaded-screenshots-including-1-a-top-pill-label-creator-marketplace-2-headline-buy-premium-templates-3-subtitle-text-discover-and-purchase-exclusive-templates-from-talented-creators-4-a-prominent-lock-upgrade-card-titled-unlock-marketplace-purchases-with-description-upgrade-to-pro-or-creator-plan-to-purchase-premium-templates-from-our-marketplace-and-a-primary-cta-button-labeled-upgrade-now-5-a-search-input-with-placeholder-search-templates-and-6-a-type-filter-control-with-default-label-all-types",
+      "title": "Update the Marketplace page UI to match the uploaded screenshots, including: (1) a top pill label \"Creator Marketplace\"; (2) headline \"Buy Premium Templates\"; (3) subtitle text \"Discover and purchase exclusive templates from talented creators\"; (4) a prominent lock/upgrade card titled \"Unlock Marketplace Purchases\" with description \"Upgrade to Pro or Creator plan to purchase premium templates from our marketplace\" and a primary CTA button labeled \"Upgrade Now\"; (5) a search input with placeholder \"Search templates...\"; and (6) a type filter control with default label \"All Types\".",
+      "reqIds": [
+        "REQ-37"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-plan-based-gating-for-marketplace-purchasing-so-that-marketplace-purchases-are-only-available-to-upgraded-plan-users-non-free-tiers-for-free-tier-users-show-the-unlock-marketplace-purchases-upgrade-card-and-ensure-purchase-actions-are-disabled-blocked-with-a-clear-upgrade-cta-for-upgraded-plan-users-hide-the-upgrade-card-and-enable-purchase-actions",
+      "title": "Implement plan-based gating for Marketplace purchasing so that Marketplace purchases are only available to upgraded-plan users (non-free tiers). For Free-tier users: show the \"Unlock Marketplace Purchases\" upgrade card and ensure purchase actions are disabled/blocked with a clear upgrade CTA. For upgraded-plan users: hide the upgrade card and enable purchase actions.",
+      "reqIds": [
+        "REQ-38"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-admin-panel-payments-tab-to-match-the-uploaded-screenshot-section-payment-requests-including-segmented-sub-tabs-all-pending-approved-rejected-and-an-empty-state-message-no-payment-requests-found-when-there-are-no-requests",
+      "title": "Update the Admin Panel \"Payments\" tab to match the uploaded screenshot section \"Payment Requests\" including segmented sub-tabs: \"All\", \"Pending\", \"Approved\", \"Rejected\" and an empty state message \"No payment requests found\" when there are no requests.",
+      "reqIds": [
+        "REQ-39"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-wire-the-admin-payment-requests-ui-to-backend-data-with-react-query-list-status-update-including-loading-error-and-retry-states-consistent-with-the-rest-of-the-app",
+      "title": "Wire the Admin \"Payment Requests\" UI to backend data with React Query (list + status update), including loading, error, and retry states consistent with the rest of the app.",
+      "reqIds": [
+        "REQ-41"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-user-facing-entry-point-from-the-billing-page-to-submit-a-manual-upi-payment-request-so-that-the-admin-payment-requests-feature-can-be-used-end-to-end-the-flow-must-collect-at-minimum-a-transaction-id-and-allow-attaching-an-optional-screenshot-using-the-existing-blob-storage-capability-submission-creates-a-pending-request-in-the-backend",
+      "title": "Add a user-facing entry point (from the Billing page) to submit a manual UPI payment request so that the Admin \"Payment Requests\" feature can be used end-to-end. The flow must collect at minimum a transaction ID and allow attaching an optional screenshot using the existing blob storage capability; submission creates a Pending request in the backend.",
+      "reqIds": [
+        "REQ-42"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-pricing-billing-upgrade-navigation-so-billingpage-knows-which-plan-tier-and-billing-period-the-user-selected-pro-business-and-monthly-yearly-using-url-parameters-and-english-user-facing-text",
+      "title": "Update the Pricing → Billing upgrade navigation so BillingPage knows which plan tier and billing period the user selected (Pro/Business and Monthly/Yearly), using URL parameters and English user-facing text.",
+      "reqIds": [
+        "REQ-43"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-upi-deep-link-on-billingpage-so-clicking-the-payment-option-opens-the-user-s-installed-upi-app-with-the-exact-plan-amount-prefilled-am-and-a-clear-transaction-note-tn-using-upi-id-6205684456-axl-and-currency-inr",
+      "title": "Update the UPI deep-link on BillingPage so clicking the payment option opens the user’s installed UPI app with the exact plan amount prefilled (am) and a clear transaction note (tn), using UPI ID 6205684456@axl and currency INR.",
+      "reqIds": [
+        "REQ-44"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-an-automatic-upi-upgrade-flow-when-a-logged-in-user-clicks-pay-with-upi-create-a-backend-payment-request-tied-to-the-selected-plan-and-amount-include-its-reference-in-the-upi-intent-and-automatically-approve-activate-the-plan-within-1-minute-without-requiring-manual-admin-approval",
+      "title": "Implement an automatic UPI upgrade flow: when a logged-in user clicks “Pay with UPI”, create a backend payment request tied to the selected plan and amount, include its reference in the UPI intent, and automatically approve/activate the plan within ~1 minute (without requiring manual admin approval).",
+      "reqIds": [
+        "REQ-45"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-backend-plan-persistence-and-a-frontend-query-hook-so-plan-gating-is-driven-by-backend-state-after-auto-approval-instead-of-relying-only-on-the-persisted-frontend-zustand-planstore",
+      "title": "Add backend plan persistence and a frontend query hook so plan gating is driven by backend state after auto-approval (instead of relying only on the persisted frontend Zustand planStore).",
+      "reqIds": [
+        "REQ-46"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -296,6 +436,48 @@
       "id": "AR-33",
       "summary": "Create Studio: after clicking Generate (generating design), render the generated image/design output in the UI (preview appears immediately when generation completes).",
       "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-34",
+      "summary": "Create Studio: after a design is generated, show an Edit option that opens the editor with customization controls for templates/design presets, textures/background styles, styling options, and adding/removing emojis.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-38",
+      "summary": "Add backend support for Community posts stored in stable state, including: create post (authenticated), list posts (public/read for logged-in users), and list following posts (based on the existing follow/following system if present; otherwise return an empty list with a clear path to extend later).",
+      "reqIds": [
+        "REQ-35"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-39",
+      "summary": "Add the feature exactly as shown in the provided screenshot and ensure it is fully functional, but gated so it is available only to users after upgrading to a paid plan (plan-based access control).",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-43",
+      "summary": "Add backend support for manual UPI payment requests so the Admin \"Payment Requests\" UI is functional: allow a logged-in user to submit a payment request (transaction ID + optional uploaded screenshot reference from existing blob storage mixin) and allow an admin to list and update request status (Pending/Approved/Rejected).",
+      "reqIds": [
+        "REQ-40"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-44",
+      "summary": "Manual UPI upgrade: when user clicks payment option, deep-link to UPI app with the exact plan amount prefilled; after payment is received, automatically unlock/activate the purchased plan within ~1 minute based on amount paid (minimize/avoid manual admin approval).",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-49",
+      "summary": "Update stable state and migrations (conditional) to preserve new payment-request fields and user-plan data across upgrades.",
+      "reqIds": [
+        "REQ-47"
+      ],
       "status": "pending"
     }
   ],

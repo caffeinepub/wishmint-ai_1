@@ -1,56 +1,117 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "UPI deep-link payment action on Billing + show generated design previews after Generate",
+  "title": "UPI deep-link with exact plan amount and auto-unlock polling UI",
   "requirements": [
     {
-      "id": "REQ-26",
-      "summary": "Add a UPI deep-link action on Billing that opens the user’s installed UPI app for payment to 6205684456@axl, with graceful fallback messaging and no disruption to the existing proof-upload flow.",
+      "id": "REQ-43",
+      "summary": "Pass selected plan tier and billing period from Pricing to Billing via URL params and render exact INR amount from pricingCopy with safe defaults.",
       "acceptanceCriteria": [
-        "On /billing, the Free-tier payment section includes a clear action (e.g., \"Pay with UPI app\") that opens a UPI deep-link (upi://pay...) using payee address 6205684456@axl.",
-        "Clicking the UPI deep-link button attempts to open a UPI app (on mobile devices) without breaking the page navigation/state.",
-        "If the browser/device blocks UPI deep-links, show an English error/toast explaining that the user can still pay by scanning the QR or using the UPI ID manually.",
-        "After the user returns to the app (manually switching back), the Billing page still shows the manual proof upload entry point (existing \"I Have Paid - Upload Proof\" flow remains available and unchanged).",
-        "All user-facing text added for this flow is in English."
+        "From /pricing, clicking “Upgrade to Pro” navigates to /billing with plan details included (tier and billing period) in the URL (e.g., query params).",
+        "BillingPage reads the selected tier/period from the URL and shows the exact INR amount for that selected plan using the existing values in frontend/src/content/copy.ts (pricingCopy).",
+        "If plan details are missing/invalid in the URL, BillingPage falls back to a safe default (e.g., Pro monthly) and clearly displays the chosen tier/period and amount."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/pages/BillingPage.tsx",
+          "path": "frontend/src/pages/PricingPage.tsx",
           "operation": "modify",
-          "description": "Add a \"Pay with UPI app\" button in the Free-tier manual payment section that builds and opens a UPI deep-link (upi://pay...) targeting payee address 6205684456@axl; keep the existing QR + UPI ID + \"I Have Paid - Upload Proof\" entry point unchanged. Implement blocked-deeplink detection (best-effort, e.g., visibility/focus + timeout) and show an English toast error with manual alternatives when opening fails. Verify the component's usage instructions before implementing."
+          "description": "Update the upgrade navigation to include URL query parameters for the selected plan tier (pro/business) and billing period (monthly/yearly) using English user-facing text; keep the login gating behavior intact."
         },
         {
           "path": "frontend/src/pages/BillingPage.tsx",
           "operation": "modify",
-          "description": "Wire up the existing \"Copy\" action to copy the UPI ID to clipboard and show an English toast confirming copy success/failure, reinforcing the manual payment fallback path. Verify the component's usage instructions before implementing."
+          "description": "Read tier and billing period from URL query parameters, validate against allowed values, fall back to a safe default when invalid/missing, and compute/display the exact INR amount from pricingCopy for the selected tier/period (all labels in English)."
+        },
+        {
+          "path": "frontend/src/utils/urlParams.ts",
+          "operation": "modify",
+          "description": "Extend URL param utilities (or add small helpers) to support retrieving non-secret billing selection query params reliably across router modes, so BillingPage can consistently read tier/period."
         }
       ]
     },
     {
-      "id": "REQ-27",
-      "summary": "Update Create Studio so Generate Designs shows a loading state and renders generated image previews in the results area after generation completes (replacing the placeholder message).",
+      "id": "REQ-44",
+      "summary": "Construct a UPI deep-link that pre-fills the exact plan amount and includes a clear transaction note in English.",
       "acceptanceCriteria": [
-        "On /create, clicking \"Generate Designs\" shows a loading state while designs are being generated.",
-        "When generation completes, the results section displays generated design image previews (at least 1 image visible).",
-        "The previous placeholder text (\"Your generated designs will appear here...\") is not shown once previews exist.",
-        "If the user is not logged in, the existing login gating remains (prompting login and preventing generation).",
-        "If required inputs are missing (e.g., empty message), the existing validation remains and no preview is shown."
+        "BillingPage constructs a UPI intent URL including at least: pa=6205684456@axl, pn=WishMint AI, cu=INR, am=<exact amount for selected plan>, and tn that includes the selected plan name and billing period (e.g., “WishMint AI Pro (Monthly)”).",
+        "The existing best-effort deep-link failure detection remains (toast guidance if the app cannot be opened).",
+        "All user-facing strings introduced/changed for this flow are in English."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/pages/CreateStudioPage.tsx",
+          "path": "frontend/src/pages/BillingPage.tsx",
           "operation": "modify",
-          "description": "Introduce local state for generation lifecycle (e.g., isGenerating + generatedPreviews) and update \"Generate Designs\" to: (1) keep existing login gating and prompt validation, (2) show a loading/disabled state while generating, and (3) on completion, set at least one generated preview image URL for rendering. Verify the component's usage instructions before implementing."
+          "description": "Update the UPI intent URL generation to include pa=6205684456@axl, pn=WishMint AI, cu=INR, am=<computed exact amount>, and tn that includes the selected plan tier and billing period in English; keep the existing best-effort deep-link failure detection/toast behavior."
+        }
+      ]
+    },
+    {
+      "id": "REQ-45",
+      "summary": "Add a frontend-driven auto-upgrade UPI flow: create an upgrade payment request before opening UPI, embed its reference in the intent, and poll UI status after returning to the app while keeping manual proof upload fallback.",
+      "acceptanceCriteria": [
+        "Backend: add a way to create a payment request specifically for an upgrade intent that stores: user, selected plan tier, billing period, expected amount, status, and timestamp (and any reference used in the UPI link).",
+        "Frontend: on “Pay with UPI”, call the backend to create this upgrade payment request before redirecting to the UPI app, and include a request reference in the UPI intent (e.g., in tn/tr fields).",
+        "Backend: add logic that marks the request as approved automatically after ~60 seconds and upgrades the user’s plan accordingly (so the UI can observe the upgrade).",
+        "Frontend: after returning to the app (e.g., tab refocus/visibilitychange), BillingPage shows an English status such as “Checking payment status…” and polls/refreshes until either (a) the plan becomes active or (b) a reasonable timeout is reached; success state is shown when the plan is unlocked.",
+        "The existing manual proof upload flow remains available as a fallback path (users can still submit transaction ID + optional screenshot)."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/backend.d.ts",
+          "operation": "modify",
+          "description": "Update frontend backend type declarations to include the new backend capabilities needed for the upgrade-intent payment request creation and status querying used by the UPI auto-upgrade flow (keep names aligned with the backend implementation so the frontend can compile)."
         },
         {
-          "path": "frontend/src/pages/CreateStudioPage.tsx",
+          "path": "frontend/src/hooks/useQueries.ts",
           "operation": "modify",
-          "description": "Replace the results placeholder card with conditional rendering: show placeholder only when no previews exist; once previews exist, render a results grid with at least one visible <img> preview (and optional basic metadata/actions if already present). Ensure the placeholder text is not shown when previews exist. Verify the component's usage instructions before implementing."
+          "description": "Add React Query hooks/mutations for (a) creating an upgrade-intent payment request prior to opening UPI and (b) querying that request’s status by reference, to support BillingPage polling/refresh logic."
         },
         {
-          "path": "frontend/src/utils/designPreview.ts",
-          "operation": "create",
-          "description": "Add a small utility to generate deterministic preview image sources (e.g., SVG data URLs) from the Create Studio inputs, so the UI can reliably render at least one 'generated design' image preview after the simulated generation completes without requiring backend changes. Verify the component's usage instructions before implementing."
+          "path": "frontend/src/pages/BillingPage.tsx",
+          "operation": "modify",
+          "description": "On “Pay with UPI”, call the backend (via a new React Query mutation) to create an upgrade-intent payment request for the selected tier/period/amount; include the returned request reference in the UPI intent (e.g., appended to tn and/or tr); after tab refocus/visibilitychange, show an English “Checking payment status…” state and poll until plan activation is observed or a timeout occurs; keep the existing ManualUpiPaymentRequestDialog fallback available and unchanged in the UI."
+        },
+        {
+          "path": "frontend/src/components/billing/ManualUpiPaymentRequestDialog.tsx",
+          "operation": "modify",
+          "description": "Ensure the manual proof upload + submission flow remains fully accessible as a fallback from BillingPage during/after the auto-upgrade flow (no removal of existing fields/behavior; English labels only if any text changes are needed)."
+        }
+      ]
+    },
+    {
+      "id": "REQ-46",
+      "summary": "Fetch the caller plan from backend state via a React Query hook and sync planStore so feature gating follows backend state after auto-approval.",
+      "acceptanceCriteria": [
+        "Backend exposes a query to fetch the caller’s current plan tier and billing period (as stored on the backend).",
+        "Backend updates the stored plan immediately when an upgrade payment request is auto-approved.",
+        "Frontend adds a React Query hook (in frontend/src/hooks/useQueries.ts) to fetch the caller plan from the backend actor.",
+        "Frontend updates UI gating by syncing planStore from backend plan query results (e.g., on app load and after payment flow completes), without editing any immutable hook paths listed in SYSTEM_CONTEXT."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/backend.d.ts",
+          "operation": "modify",
+          "description": "Update frontend backend type declarations to include the backend capability for fetching the caller’s current plan tier and billing period, as required by the new plan query hook."
+        },
+        {
+          "path": "frontend/src/hooks/useQueries.ts",
+          "operation": "modify",
+          "description": "Add a React Query hook to fetch the caller’s current plan from the backend actor (enabled only when actor is available) and expose a stable queryKey suitable for invalidation after payment completion."
+        },
+        {
+          "path": "frontend/src/components/layout/AppLayout.tsx",
+          "operation": "modify",
+          "description": "Wire planStore syncing at the app layout level: when the backend caller-plan query resolves/changes, update the persisted Zustand planStore (tier and billingPeriod) so all gated pages/components reflect backend state."
+        },
+        {
+          "path": "frontend/src/state/planStore.ts",
+          "operation": "modify",
+          "description": "Extend the Zustand planStore with a single helper setter that can atomically sync both tier and billingPeriod from backend query results (to avoid inconsistent intermediate UI gating)."
+        },
+        {
+          "path": "frontend/src/pages/BillingPage.tsx",
+          "operation": "modify",
+          "description": "After the auto-upgrade polling detects success (or when returning from UPI), invalidate/refetch the backend caller-plan query and sync the store so BillingPage and other gated areas reflect the newly activated plan."
         }
       ]
     }

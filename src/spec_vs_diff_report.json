@@ -1,25 +1,51 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-13T05:33:43.051Z",
-  "summary": "REQ-26 appears implemented by adding a UPI deep-link handler in BillingPage using pa=6205684456@axl and showing an English toast on likely deep-link failure. REQ-27 appears implemented by adding generated preview state and rendering logic fed by a new preview generator; however, the diff shows generation is simulated client-side via setTimeout rather than integrating with an actual generation-completes event.",
-  "missing_requirements": [],
-  "hallucinated_features": [
+  "generatedAt": "2026-02-13T14:31:25.815Z",
+  "summary": "REQ-43 appears implemented via PricingPage navigation with URL search params and BillingPage reading tier/period to compute exact amount from pricingCopy with safe defaults. UPI deep-link construction for exact amount and plan note is present, but the diff is truncated before showing whether best-effort deep-link failure detection/toast guidance remains. The auto-upgrade flow (backend payment request creation tied to selected plan+amount and auto-approval within ~60s) is not clearly implemented in the shown backend/frontend code; migration adds only a planId field to payment requests and initializes plan/userPlan maps, but expected amount/tier/period and auto-approval logic are not evidenced. Backend plan persistence/query hook and planStore syncing is partially evidenced in AppLayout, but the backend query and hook implementation are not shown in the provided excerpt.",
+  "missing_requirements": [
     {
-      "description": "Client-side simulated design generation with deterministic SVG data-URL previews (3 variations) instead of using whatever existing/real generation mechanism completes.",
-      "reason": "REQ-27 asks to render generated images after generation completes, but does not request replacing the generation process with a simulated timeout and locally generated SVG previews.",
+      "id": "REQ-44",
+      "requirement": "Keep existing best-effort UPI deep-link failure detection (toast guidance if the app cannot be opened).",
+      "reason": "BillingPage shows UPI URL construction, but the diff is truncated immediately after and does not show any failure-detection logic (e.g., timeout + toast if app not opened).",
       "evidence": [
-        "frontend/src/pages/CreateStudioPage.tsx",
-        "frontend/src/utils/designPreview.ts"
+        "frontend/src/pages/BillingPage.tsx"
+      ]
+    },
+    {
+      "id": "REQ-45",
+      "requirement": "On “Pay with UPI”, call backend to create an upgrade-intent payment request storing user, selected tier, billing period, expected amount, status, timestamp; include its reference in the UPI intent; backend auto-approves after ~60s and upgrades the user plan; frontend polls/refreshes after returning focus until active or timeout; manual proof upload remains as fallback.",
+      "reason": "BillingPage shows a locally-generated reference (WISHMINT-...) and constructs the UPI link, but no backend payment-request creation call is evidenced in the visible portion. Backend changes shown do not evidence an upgrade-intent creation endpoint, expected-amount/tier/period fields, or auto-approval timer/logic that upgrades user plan after ~60s.",
+      "evidence": [
+        "frontend/src/pages/BillingPage.tsx",
+        "backend/main.mo",
+        "backend/migration.mo"
+      ]
+    },
+    {
+      "id": "REQ-46",
+      "requirement": "Backend exposes a query to fetch caller’s current plan tier and billing period, updates stored plan on auto-approval; frontend adds a React Query hook in frontend/src/hooks/useQueries.ts and syncs planStore from backend plan query results.",
+      "reason": "AppLayout calls useGetCallerUserPlan and syncPlanFromBackend, but the provided useQueries.ts excerpt does not show the actual useGetCallerUserPlan hook implementation or the backend actor method it calls. The backend main.mo excerpt is truncated before any plan query/plan update functions are shown.",
+      "evidence": [
+        "frontend/src/components/layout/AppLayout.tsx",
+        "frontend/src/hooks/useQueries.ts",
+        "backend/main.mo"
       ]
     }
   ],
-  "confidence": 0.68,
+  "hallucinated_features": [],
+  "confidence": 0.56,
   "changed_files": [
+    "backend/main.mo",
+    "backend/migration.mo",
     "frontend-file-summaries.txt",
+    "frontend/src/components/billing/ManualUpiPaymentRequestDialog.tsx",
+    "frontend/src/components/layout/AppLayout.tsx",
+    "frontend/src/hooks/useQueries.ts",
     "frontend/src/pages/BillingPage.tsx",
-    "frontend/src/pages/CreateStudioPage.tsx",
-    "frontend/src/utils/designPreview.ts",
+    "frontend/src/pages/PricingPage.tsx",
+    "frontend/src/state/planStore.ts",
+    "frontend/src/utils/urlParams.ts",
     "project_state.json"
   ]
 }

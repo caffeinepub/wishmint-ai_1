@@ -206,3 +206,20 @@ export function getSecretFromHash(paramName: string): string | null {
 export function getSecretParameter(paramName: string): string | null {
     return getSecretFromHash(paramName);
 }
+
+/**
+ * Extracts billing plan selection from URL query parameters
+ * Used for passing plan tier and billing period from pricing to billing page
+ *
+ * @returns Object with tier and billingPeriod, or null if not found
+ */
+export function getBillingSelectionFromUrl(): { tier: string; billingPeriod: string } | null {
+    const tier = getUrlParameter('tier');
+    const billingPeriod = getUrlParameter('period');
+
+    if (tier && billingPeriod) {
+        return { tier, billingPeriod };
+    }
+
+    return null;
+}

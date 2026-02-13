@@ -1,58 +1,105 @@
 {
   "kind": "build_request",
-  "title": "Deep-link UPI payment on upgrade and show generated design images after Generate",
+  "title": "UPI deep-link with exact plan amount + auto-unlock within ~1 minute after payment",
   "priority": "normal",
   "requirements": [
     {
-      "id": "REQ-26",
-      "text": "Add a UPI app redirect (deep-link) in the plan upgrade payment flow so that when a user chooses to upgrade and clicks the payment option, the app opens the user’s installed UPI app to complete the payment using the existing UPI ID 6205684456@axl, then returns the user back to the Billing page to continue the existing proof upload / pending approval flow.",
+      "id": "REQ-43",
+      "text": "Update the Pricing → Billing upgrade navigation so BillingPage knows which plan tier and billing period the user selected (Pro/Business and Monthly/Yearly), using URL parameters and English user-facing text.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "recent-messages-6"
+          "msg-1"
         ],
         "quotes": [
-          "Add this When a user upgrade plans and after they click payment option and then they get redirect to upi app to pay money"
+          "Upi Manual payment after clicking payment option it redirect to upi app With exact amount of upgrade plans"
         ]
       },
       "acceptanceCriteria": [
-        "On /billing, the Free-tier payment section includes a clear action (e.g., \"Pay with UPI app\") that opens a UPI deep-link (upi://pay...) using payee address 6205684456@axl.",
-        "Clicking the UPI deep-link button attempts to open a UPI app (on mobile devices) without breaking the page navigation/state.",
-        "If the browser/device blocks UPI deep-links, show an English error/toast explaining that the user can still pay by scanning the QR or using the UPI ID manually.",
-        "After the user returns to the app (manually switching back), the Billing page still shows the manual proof upload entry point (existing \"I Have Paid - Upload Proof\" flow remains available and unchanged).",
-        "All user-facing text added for this flow is in English."
+        "From /pricing, clicking “Upgrade to Pro” navigates to /billing with plan details included (tier and billing period) in the URL (e.g., query params).",
+        "BillingPage reads the selected tier/period from the URL and shows the exact INR amount for that selected plan using the existing values in frontend/src/content/copy.ts (pricingCopy).",
+        "If plan details are missing/invalid in the URL, BillingPage falls back to a safe default (e.g., Pro monthly) and clearly displays the chosen tier/period and amount."
       ]
     },
     {
-      "id": "REQ-27",
-      "text": "Update the Create Studio Generate Designs action so that after the user clicks \"Generate Designs\" and generation completes, generated design images are rendered in the results area (replacing the current placeholder message), with at least one visible preview image displayed.",
+      "id": "REQ-44",
+      "text": "Update the UPI deep-link on BillingPage so clicking the payment option opens the user’s installed UPI app with the exact plan amount prefilled (am) and a clear transaction note (tn), using UPI ID 6205684456@axl and currency INR.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "recent-messages-6"
+          "msg-1"
         ],
         "quotes": [
-          "After clicking generating design so now image should appear their"
+          "Upi Manual payment after clicking payment option it redirect to upi app With exact amount of upgrade plans and just to pay"
         ]
       },
       "acceptanceCriteria": [
-        "On /create, clicking \"Generate Designs\" shows a loading state while designs are being generated.",
-        "When generation completes, the results section displays generated design image previews (at least 1 image visible).",
-        "The previous placeholder text (\"Your generated designs will appear here...\") is not shown once previews exist.",
-        "If the user is not logged in, the existing login gating remains (prompting login and preventing generation).",
-        "If required inputs are missing (e.g., empty message), the existing validation remains and no preview is shown."
+        "BillingPage constructs a UPI intent URL including at least: pa=6205684456@axl, pn=WishMint AI, cu=INR, am=<exact amount for selected plan>, and tn that includes the selected plan name and billing period (e.g., “WishMint AI Pro (Monthly)”).",
+        "The existing best-effort deep-link failure detection remains (toast guidance if the app cannot be opened).",
+        "All user-facing strings introduced/changed for this flow are in English."
+      ]
+    },
+    {
+      "id": "REQ-45",
+      "text": "Implement an automatic UPI upgrade flow: when a logged-in user clicks “Pay with UPI”, create a backend payment request tied to the selected plan and amount, include its reference in the UPI intent, and automatically approve/activate the plan within ~1 minute (without requiring manual admin approval).",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "After completed payment and then when my upi received money then according to you amount paid to upgrade plans it will unlock in 1 minutes approval time"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Backend: add a way to create a payment request specifically for an upgrade intent that stores: user, selected plan tier, billing period, expected amount, status, and timestamp (and any reference used in the UPI link).",
+        "Frontend: on “Pay with UPI”, call the backend to create this upgrade payment request before redirecting to the UPI app, and include a request reference in the UPI intent (e.g., in tn/tr fields).",
+        "Backend: add logic that marks the request as approved automatically after ~60 seconds and upgrades the user’s plan accordingly (so the UI can observe the upgrade).",
+        "Frontend: after returning to the app (e.g., tab refocus/visibilitychange), BillingPage shows an English status such as “Checking payment status…” and polls/refreshes until either (a) the plan becomes active or (b) a reasonable timeout is reached; success state is shown when the plan is unlocked.",
+        "The existing manual proof upload flow remains available as a fallback path (users can still submit transaction ID + optional screenshot)."
+      ]
+    },
+    {
+      "id": "REQ-46",
+      "text": "Add backend plan persistence and a frontend query hook so plan gating is driven by backend state after auto-approval (instead of relying only on the persisted frontend Zustand planStore).",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Backend exposes a query to fetch the caller’s current plan tier and billing period (as stored on the backend).",
+        "Backend updates the stored plan immediately when an upgrade payment request is auto-approved.",
+        "Frontend adds a React Query hook (in frontend/src/hooks/useQueries.ts) to fetch the caller plan from the backend actor.",
+        "Frontend updates UI gating by syncing planStore from backend plan query results (e.g., on app load and after payment flow completes), without editing any immutable hook paths listed in SYSTEM_CONTEXT."
+      ]
+    },
+    {
+      "id": "REQ-47",
+      "text": "Update stable state and migrations (conditional) to preserve new payment-request fields and user-plan data across upgrades.",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ]
+      },
+      "acceptanceCriteria": [
+        "If existing stable state is present, backend/migration.mo is updated conditionally to migrate/initialize any new fields added for (a) upgrade-intent payment requests and (b) persisted user plan state, without breaking existing deployed state.",
+        "After canister upgrade, existing payment requests still load correctly and new requests can be created and auto-approved as expected."
       ]
     }
   ],
   "constraints": [
-    "Do not edit files under frontend/src/components/ui (Shadcn components are read-only).",
-    "Do not edit immutable hook bootstrap files (frontend/src/hooks/useInternetIdentity.ts / .tsx, frontend/src/hooks/useActor.ts, frontend/src/main.tsx).",
-    "Backend must remain a single Motoko actor; only introduce backend changes if strictly required for these two behaviors."
+    "Backend must remain a single Motoko actor with all logic in backend/main.mo (no additional backend services).",
+    "Do not edit frontend paths listed as immutable in SYSTEM_CONTEXT (compose around them instead).",
+    "Keep UPI ID exactly as: 6205684456@axl.",
+    "All user-facing text must be English."
   ],
   "nonGoals": [
-    "Implementing automatic payment verification from UPI apps (e.g., reading transaction status from a bank/UPI provider).",
-    "Adding Razorpay/PayPal or any third-party payment gateway integration beyond the requested UPI deep-link.",
-    "Redesigning the entire Create Studio editor/export system beyond making generated images appear after generation."
+    "Do not integrate real bank/UPI provider webhooks or external payment verification APIs (no external services).",
+    "Do not add third-party authentication providers beyond Internet Identity.",
+    "Do not remove the existing manual proof upload + admin review capability; it must remain as a fallback."
   ],
   "imageRequirements": {
     "required": [],
