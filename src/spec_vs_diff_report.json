@@ -1,50 +1,57 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-13T14:31:25.815Z",
-  "summary": "REQ-43 appears implemented via PricingPage navigation with URL search params and BillingPage reading tier/period to compute exact amount from pricingCopy with safe defaults. UPI deep-link construction for exact amount and plan note is present, but the diff is truncated before showing whether best-effort deep-link failure detection/toast guidance remains. The auto-upgrade flow (backend payment request creation tied to selected plan+amount and auto-approval within ~60s) is not clearly implemented in the shown backend/frontend code; migration adds only a planId field to payment requests and initializes plan/userPlan maps, but expected amount/tier/period and auto-approval logic are not evidenced. Backend plan persistence/query hook and planStore syncing is partially evidenced in AppLayout, but the backend query and hook implementation are not shown in the provided excerpt.",
+  "generatedAt": "2026-02-13T15:42:00.437Z",
+  "summary": "Diff implements several Create Studio enhancements: generator now returns 6 previews; editor preset catalogs for templates/textures are expanded; customization types include fontFamily/accentColor/borderStyle; editor panel initializes and handles these new fields; CreateStudioPage adds a download flow (SVG→PNG) but key AC details are truncated and not fully verifiable. One unrelated change appears in urlParams utilities.",
   "missing_requirements": [
     {
-      "id": "REQ-44",
-      "requirement": "Keep existing best-effort UPI deep-link failure detection (toast guidance if the app cannot be opened).",
-      "reason": "BillingPage shows UPI URL construction, but the diff is truncated immediately after and does not show any failure-detection logic (e.g., timeout + toast if app not opened).",
+      "id": "REQ-49",
+      "requirement": "Font family selection control is present in the editor UI and applying it visibly changes the rendered SVG preview (with a sensible default).",
+      "reason": "Types and state include fontFamily and presets include fontOptions, but the truncated diff for DesignEditorPanel does not show the actual UI control (e.g., Select) being rendered, and the SVG renderer (createDesignSVG) is truncated so it is not evidenced that fontFamily is applied to the SVG output or that a default is consistently enforced in rendering.",
       "evidence": [
-        "frontend/src/pages/BillingPage.tsx"
+        "frontend/src/components/createStudio/DesignEditorPanel.tsx (truncated)",
+        "frontend/src/utils/designPreview.ts (truncated)",
+        "frontend/src/components/createStudio/editorPresets.ts",
+        "frontend/src/components/createStudio/types.ts"
       ]
     },
     {
-      "id": "REQ-45",
-      "requirement": "On “Pay with UPI”, call backend to create an upgrade-intent payment request storing user, selected tier, billing period, expected amount, status, timestamp; include its reference in the UPI intent; backend auto-approves after ~60s and upgrades the user plan; frontend polls/refreshes after returning focus until active or timeout; manual proof upload remains as fallback.",
-      "reason": "BillingPage shows a locally-generated reference (WISHMINT-...) and constructs the UPI link, but no backend payment-request creation call is evidenced in the visible portion. Backend changes shown do not evidence an upgrade-intent creation endpoint, expected-amount/tier/period fields, or auto-approval timer/logic that upgrades user plan after ~60s.",
+      "id": "REQ-50",
+      "requirement": "Download action works for each design with readable filename including occasion/title, downloads latest customized output, and shows a clear English error toast on failure.",
+      "reason": "handleDownload is added and begins an SVG→PNG conversion, but the diff is truncated before showing: (1) the final download link/filename logic, (2) explicit use of occasion/title in filename, and (3) the error toast/message in the catch path. Also not fully evidenced that it downloads the latest post-customization image for the selected design beyond using design.imageUrl.",
       "evidence": [
-        "frontend/src/pages/BillingPage.tsx",
-        "backend/main.mo",
-        "backend/migration.mo"
+        "frontend/src/pages/CreateStudioPage.tsx (truncated)"
       ]
     },
     {
-      "id": "REQ-46",
-      "requirement": "Backend exposes a query to fetch caller’s current plan tier and billing period, updates stored plan on auto-approval; frontend adds a React Query hook in frontend/src/hooks/useQueries.ts and syncs planStore from backend plan query results.",
-      "reason": "AppLayout calls useGetCallerUserPlan and syncPlanFromBackend, but the provided useQueries.ts excerpt does not show the actual useGetCallerUserPlan hook implementation or the backend actor method it calls. The backend main.mo excerpt is truncated before any plan query/plan update functions are shown.",
+      "id": "REQ-51",
+      "requirement": "At least two additional customization controls beyond Templates/Style/Texture/Emojis are added, persisted per design, and visibly affect the preview output after Apply Changes.",
+      "reason": "New customization fields (accentColor, borderStyle) are added and persisted in state, and accentColor is used to change bgColor in applyCustomization; however, the DesignEditorPanel UI rendering for these controls is truncated and createDesignSVG is truncated, so it is not evidenced that both new controls exist in the UI and that borderStyle (and any other new control) visibly affects the SVG output.",
       "evidence": [
-        "frontend/src/components/layout/AppLayout.tsx",
-        "frontend/src/hooks/useQueries.ts",
-        "backend/main.mo"
+        "frontend/src/components/createStudio/DesignEditorPanel.tsx (truncated)",
+        "frontend/src/components/createStudio/types.ts",
+        "frontend/src/components/createStudio/editorPresets.ts",
+        "frontend/src/utils/designPreview.ts (truncated)"
       ]
     }
   ],
-  "hallucinated_features": [],
-  "confidence": 0.56,
+  "hallucinated_features": [
+    {
+      "description": "Added/modified URL parameter + sessionStorage utilities (getUrlParameter/getPersistedUrlParameter, etc.) unrelated to Create Studio template/font/download/editor enhancements.",
+      "reason": "Not requested by REQ-48/49/50/51; appears to be a separate utility change.",
+      "evidence": [
+        "frontend/src/utils/urlParams.ts (truncated)"
+      ]
+    }
+  ],
+  "confidence": 0.62,
   "changed_files": [
-    "backend/main.mo",
-    "backend/migration.mo",
     "frontend-file-summaries.txt",
-    "frontend/src/components/billing/ManualUpiPaymentRequestDialog.tsx",
-    "frontend/src/components/layout/AppLayout.tsx",
-    "frontend/src/hooks/useQueries.ts",
-    "frontend/src/pages/BillingPage.tsx",
-    "frontend/src/pages/PricingPage.tsx",
-    "frontend/src/state/planStore.ts",
+    "frontend/src/components/createStudio/DesignEditorPanel.tsx",
+    "frontend/src/components/createStudio/editorPresets.ts",
+    "frontend/src/components/createStudio/types.ts",
+    "frontend/src/pages/CreateStudioPage.tsx",
+    "frontend/src/utils/designPreview.ts",
     "frontend/src/utils/urlParams.ts",
     "project_state.json"
   ]

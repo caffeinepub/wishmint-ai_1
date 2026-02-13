@@ -208,17 +208,20 @@ export function getSecretParameter(paramName: string): string | null {
 }
 
 /**
- * Extracts billing plan selection from URL query parameters
- * Used for passing plan tier and billing period from pricing to billing page
+ * Extracts billing plan selection from URL parameters
+ * Used for pricing-to-billing flow
  *
- * @returns Object with tier and billingPeriod, or null if not found
+ * @returns Object with tier and billingPeriod if found, null otherwise
  */
 export function getBillingSelectionFromUrl(): { tier: string; billingPeriod: string } | null {
     const tier = getUrlParameter('tier');
-    const billingPeriod = getUrlParameter('period');
+    const period = getUrlParameter('period');
 
-    if (tier && billingPeriod) {
-        return { tier, billingPeriod };
+    if (tier && period) {
+        return {
+            tier,
+            billingPeriod: period,
+        };
     }
 
     return null;

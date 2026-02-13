@@ -1,14 +1,13 @@
 # Specification
 
 ## Summary
-**Goal:** Make Billing upgrades use the exact selected plan amount via UPI deep-links, and auto-unlock the plan within ~1 minute after initiating a UPI payment, while keeping manual proof upload as fallback.
+**Goal:** Enhance Create Studio’s card generation and editing so users have more design/template/texture/font options, richer customization, and a working download flow for finalized designs.
 
 **Planned changes:**
-- Update /pricing → /billing navigation to include the selected plan tier (Pro/Business) and billing period (Monthly/Yearly) in the URL, using English user-facing text.
-- Update BillingPage to read tier/period from URL params, display the exact INR amount from existing `pricingCopy`, and fall back to a safe default when params are missing/invalid.
-- Update the UPI deep-link on BillingPage to open installed UPI apps with the exact plan amount (am), INR currency, UPI ID `6205684456@axl`, and an English transaction note including plan and period.
-- Implement an automatic upgrade flow: on “Pay with UPI”, create a backend upgrade payment request (user, tier, period, expected amount, status, timestamp, reference), include the reference in the UPI intent, and auto-approve/upgrade after ~60 seconds.
-- Add backend persistence for the user’s current plan and a frontend React Query hook to fetch it; sync UI gating/planStore from backend plan state (including after the payment flow completes).
-- Update backend stable state and conditional migrations to preserve new upgrade-payment-request fields and persisted user-plan data across canister upgrades.
+- Expand the procedural generator output so “Generate Designs” produces at least 6 distinct preview variations with meaningful layout/visual differences.
+- Add more Template and Texture presets to the Create Studio editor preset catalog and ensure selecting them visibly updates the preview after applying changes.
+- Add a font family selector to the editor, persist the selected font in design customization state, and apply it to rendered preview output with a sensible default.
+- Implement a functional “Download” action for each generated design that downloads the latest customized result with a readable filename and clear retryable error messaging on failure.
+- Add at least two additional customization controls (beyond Templates/Style/Texture/Emojis), persist them per design, and ensure they visibly affect the preview when applied.
 
-**User-visible outcome:** Users can select a plan on Pricing, go to Billing with that exact plan selection, tap “Pay with UPI” to open their UPI app with the exact amount prefilled, and have their plan automatically activated within about a minute (with an English “checking payment status” flow), while still being able to upload proof for manual review if needed.
+**User-visible outcome:** Users can generate more varied card designs, customize them with more templates/textures/fonts and additional controls, and successfully download the final edited invitation/birthday/wedding (and other) card designs.

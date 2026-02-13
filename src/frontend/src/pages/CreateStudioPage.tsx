@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Sparkles, Wand2, Smile, Frown, Loader2 } from 'lucide-react';
+import { Sparkles, Wand2, Smile, Frown, Loader2, Download } from 'lucide-react';
 import { useState } from 'react';
 import { useInternetIdentity } from '../hooks/useInternetIdentity';
 import { toast } from 'sonner';
@@ -107,6 +107,65 @@ export default function CreateStudioPage() {
     setGeneratedPreviews(updatedPreviews);
     setEditingDesign(null);
     toast.success('Design updated successfully!');
+  };
+
+  const handleDownload = async (design: DesignPreview) => {
+    try {
+      // Convert SVG data URL to blob
+      const response = await fetch(design.imageUrl);
+      const blob = await response.blob();
+      
+      // Create a canvas to convert SVG to PNG
+      const img = new Image();
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      
+      if (!ctx) {
+        throw new Error('Failed to get canvas context');
+      }
+
+      img.onload = () => {
+        // Set canvas size to match image
+        canvas.width = 800; // 2x for better quality
+        canvas.height = 1200;
+        
+        // Draw white background
+        ctx.fillStyle = 'white';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // Draw image
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        
+        // Convert to blob and download
+        canvas.toBlob((pngBlob) => {
+          if (!pngBlob) {
+            toast.error('Failed to create download file');
+            return;
+          }
+          
+          const url = URL.createObjectURL(pngBlob);
+          const link = document.createElement('a');
+          const filename = `${occasion}-${design.title.replace(/\s+/g, '-')}.png`;
+          link.href = url;
+          link.download = filename;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          URL.revokeObjectURL(url);
+          
+          toast.success('Design downloaded successfully!');
+        }, 'image/png');
+      };
+
+      img.onerror = () => {
+        toast.error('Failed to load design for download');
+      };
+
+      img.src = design.imageUrl;
+    } catch (error) {
+      console.error('Download error:', error);
+      toast.error('Failed to download design. Please try again.');
+    }
   };
 
   return (
@@ -306,7 +365,13 @@ export default function CreateStudioPage() {
                           >
                             Edit
                           </Button>
-                          <Button size="sm" variant="secondary" className="flex-1">
+                          <Button 
+                            size="sm" 
+                            variant="secondary" 
+                            className="flex-1"
+                            onClick={() => handleDownload(preview)}
+                          >
+                            <Download className="h-4 w-4 mr-1" />
                             Download
                           </Button>
                         </div>

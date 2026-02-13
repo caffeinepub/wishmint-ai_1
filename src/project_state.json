@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 15,
+  "projectStateVersion": 17,
   "summary": "WishMint AI: a production-ready, premium, responsive web platform to generate AI wish cards/invitations in a Create Studio and run a creator Marketplace (buy/sell templates), with authentication, billing/payments (Razorpay + UPI fallback), creator profiles/followers/views, earnings/withdrawals, admin moderation/approvals, analytics/SEO, and full site copy.",
   "architectural_notes": [
     "GA4 integration requested: add Google tag (gtag.js) site-wide with measurement ID G-XQQQ1HCG24.",
@@ -339,6 +339,38 @@
         "REQ-46"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-expand-create-studio-s-procedural-generator-and-preset-catalog-so-users-have-more-high-quality-design-variations-templates-and-textures-when-generating-invitation-birthday-wedding-cards",
+      "title": "Expand Create Studio’s procedural generator and preset catalog so users have more high-quality design variations, templates, and textures when generating Invitation/Birthday/Wedding cards.",
+      "reqIds": [
+        "REQ-48"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-font-family-selection-to-the-create-studio-editor-and-ensure-font-selection-is-applied-to-the-rendered-design-preview-for-generated-cards-invitation-birthday-wedding-and-other-occasions",
+      "title": "Add font family selection to the Create Studio editor and ensure font selection is applied to the rendered design preview for generated cards (Invitation/Birthday/Wedding and other occasions).",
+      "reqIds": [
+        "REQ-49"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-a-functional-download-action-for-each-generated-design-so-users-can-download-the-final-customized-invitation-birthday-wedding-card-design-after-editing",
+      "title": "Implement a functional “Download” action for each generated design so users can download the final customized Invitation/Birthday/Wedding card design after editing.",
+      "reqIds": [
+        "REQ-50"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-small-set-of-additional-create-studio-customization-controls-more-things-that-improve-invitation-card-editing-beyond-the-current-template-style-texture-emojis-and-ensure-they-affect-the-preview-output-when-applied",
+      "title": "Add a small set of additional Create Studio customization controls (“more things”) that improve invitation/card editing beyond the current template/style/texture/emojis, and ensure they affect the preview output when applied.",
+      "reqIds": [
+        "REQ-51"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -478,6 +510,12 @@
       "reqIds": [
         "REQ-47"
       ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-50",
+      "summary": "Create Studio enhancements: add more high-quality design variations/templates plus more textures and fonts; ensure after Generate users can edit/customize invitation/birthday/wedding cards and download/export the final design",
+      "reqIds": [],
       "status": "pending"
     }
   ],

@@ -1,103 +1,87 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-13T14:31:25.821Z",
+  "generatedAt": "2026-02-13T15:42:00.442Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 5,
+    "total": 4,
     "implemented": 4,
     "items": [
       {
-        "id": "REQ-43",
-        "summary": "Update the Pricing → Billing upgrade navigation so BillingPage knows which plan tier and billing period the user selected (Pro/Business and Monthly/Yearly), using URL parameters and English user-facing text.",
+        "id": "REQ-48",
+        "summary": "Expand Create Studio’s procedural generator and preset catalog so users have more high-quality design variations, templates, and textures when generating Invitation/Birthday/Wedding cards.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/pages/PricingPage.tsx",
-          "frontend/src/pages/BillingPage.tsx",
-          "frontend/src/utils/urlParams.ts"
+          "frontend/src/utils/designPreview.ts",
+          "frontend/src/components/createStudio/editorPresets.ts",
+          "frontend/src/components/createStudio/DesignEditorPanel.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/pages/PricingPage.tsx",
-          "frontend/src/pages/BillingPage.tsx",
-          "frontend/src/utils/urlParams.ts"
+          "frontend/src/utils/designPreview.ts",
+          "frontend/src/components/createStudio/editorPresets.ts",
+          "frontend/src/components/createStudio/DesignEditorPanel.tsx"
         ]
       },
       {
-        "id": "REQ-44",
-        "summary": "Update the UPI deep-link on BillingPage so clicking the payment option opens the user’s installed UPI app with the exact plan amount prefilled (am) and a clear transaction note (tn), using UPI ID 6205684456@axl and currency INR.",
+        "id": "REQ-49",
+        "summary": "Add font family selection to the Create Studio editor and ensure font selection is applied to the rendered design preview for generated cards (Invitation/Birthday/Wedding and other occasions).",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/pages/BillingPage.tsx"
+          "frontend/src/components/createStudio/types.ts",
+          "frontend/src/components/createStudio/editorPresets.ts",
+          "frontend/src/components/createStudio/DesignEditorPanel.tsx",
+          "frontend/src/utils/designPreview.ts"
         ],
         "matchedFiles": [
-          "frontend/src/pages/BillingPage.tsx"
+          "frontend/src/components/createStudio/types.ts",
+          "frontend/src/components/createStudio/editorPresets.ts",
+          "frontend/src/components/createStudio/DesignEditorPanel.tsx",
+          "frontend/src/utils/designPreview.ts"
         ]
       },
       {
-        "id": "REQ-45",
-        "summary": "Implement an automatic UPI upgrade flow: when a logged-in user clicks “Pay with UPI”, create a backend payment request tied to the selected plan and amount, include its reference in the UPI intent, and automatically approve/activate the plan within ~1 minute (without requiring manual admin approval).",
+        "id": "REQ-50",
+        "summary": "Implement a functional “Download” action for each generated design so users can download the final customized Invitation/Birthday/Wedding card design after editing.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/backend.d.ts",
-          "frontend/src/hooks/useQueries.ts",
-          "frontend/src/pages/BillingPage.tsx",
-          "frontend/src/components/billing/ManualUpiPaymentRequestDialog.tsx"
+          "frontend/src/pages/CreateStudioPage.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/backend.d.ts",
-          "frontend/src/hooks/useQueries.ts",
-          "frontend/src/pages/BillingPage.tsx",
-          "frontend/src/components/billing/ManualUpiPaymentRequestDialog.tsx"
+          "frontend/src/pages/CreateStudioPage.tsx"
         ]
       },
       {
-        "id": "REQ-46",
-        "summary": "Add backend plan persistence and a frontend query hook so plan gating is driven by backend state after auto-approval (instead of relying only on the persisted frontend Zustand planStore).",
+        "id": "REQ-51",
+        "summary": "Add a small set of additional Create Studio customization controls (“more things”) that improve invitation/card editing beyond the current template/style/texture/emojis, and ensure they affect the preview output when applied.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/backend.d.ts",
-          "frontend/src/hooks/useQueries.ts",
-          "frontend/src/components/layout/AppLayout.tsx",
-          "frontend/src/state/planStore.ts",
-          "frontend/src/pages/BillingPage.tsx"
+          "frontend/src/components/createStudio/types.ts",
+          "frontend/src/components/createStudio/DesignEditorPanel.tsx",
+          "frontend/src/pages/CreateStudioPage.tsx",
+          "frontend/src/utils/designPreview.ts"
         ],
         "matchedFiles": [
-          "frontend/src/backend.d.ts",
-          "frontend/src/hooks/useQueries.ts",
-          "frontend/src/components/layout/AppLayout.tsx",
-          "frontend/src/state/planStore.ts",
-          "frontend/src/pages/BillingPage.tsx"
+          "frontend/src/components/createStudio/types.ts",
+          "frontend/src/components/createStudio/DesignEditorPanel.tsx",
+          "frontend/src/pages/CreateStudioPage.tsx",
+          "frontend/src/utils/designPreview.ts"
         ]
-      },
-      {
-        "id": "REQ-47",
-        "summary": "Update stable state and migrations (conditional) to preserve new payment-request fields and user-plan data across upgrades.",
-        "status": "unknown",
-        "plannedFiles": [],
-        "matchedFiles": []
       }
     ]
   },
   "changedFiles": [
-    "backend/main.mo",
-    "backend/migration.mo",
     "build-request.json",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/backend.d.ts",
-    "frontend/src/backend.ts",
-    "frontend/src/components/billing/ManualUpiPaymentRequestDialog.tsx",
-    "frontend/src/components/layout/AppLayout.tsx",
-    "frontend/src/declarations/backend.did.d.ts",
-    "frontend/src/declarations/backend.did.js",
-    "frontend/src/hooks/useQueries.ts",
-    "frontend/src/pages/BillingPage.tsx",
-    "frontend/src/pages/PricingPage.tsx",
-    "frontend/src/state/planStore.ts",
+    "frontend/src/components/createStudio/DesignEditorPanel.tsx",
+    "frontend/src/components/createStudio/editorPresets.ts",
+    "frontend/src/components/createStudio/types.ts",
+    "frontend/src/pages/CreateStudioPage.tsx",
+    "frontend/src/utils/designPreview.ts",
     "frontend/src/utils/urlParams.ts",
     "project_state.json",
     "scratch/component-selection.json",

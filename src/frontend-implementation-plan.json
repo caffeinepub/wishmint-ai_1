@@ -1,117 +1,113 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "UPI deep-link with exact plan amount and auto-unlock polling UI",
+  "title": "Create Studio: richer templates/fonts/customization and working downloads",
   "requirements": [
     {
-      "id": "REQ-43",
-      "summary": "Pass selected plan tier and billing period from Pricing to Billing via URL params and render exact INR amount from pricingCopy with safe defaults.",
+      "id": "REQ-48",
+      "summary": "Expand procedural generation to produce 6+ distinct design previews and broaden template/texture preset catalogs.",
       "acceptanceCriteria": [
-        "From /pricing, clicking “Upgrade to Pro” navigates to /billing with plan details included (tier and billing period) in the URL (e.g., query params).",
-        "BillingPage reads the selected tier/period from the URL and shows the exact INR amount for that selected plan using the existing values in frontend/src/content/copy.ts (pricingCopy).",
-        "If plan details are missing/invalid in the URL, BillingPage falls back to a safe default (e.g., Pro monthly) and clearly displays the chosen tier/period and amount."
+        "In Create Studio, clicking “Generate Designs” produces at least 6 distinct previews (not just 3) for the same input.",
+        "The preview variations differ in layout and visual treatment (e.g., template/layout, background, texture) rather than only title/id.",
+        "The editor preset catalog in the UI includes additional Template options and additional Texture options beyond the current lists in frontend/src/components/createStudio/editorPresets.ts.",
+        "The additional presets are selectable in the editor and visibly change the preview output after applying changes."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/pages/PricingPage.tsx",
+          "path": "frontend/src/utils/designPreview.ts",
           "operation": "modify",
-          "description": "Update the upgrade navigation to include URL query parameters for the selected plan tier (pro/business) and billing period (monthly/yearly) using English user-facing text; keep the login gating behavior intact."
+          "description": "Update the deterministic/procedural generator to create at least 6 previews per generation and ensure variations differ by layout/visual treatment (e.g., more distinct layout variants, different background treatments, and/or different texture application) while remaining frontend-only."
         },
         {
-          "path": "frontend/src/pages/BillingPage.tsx",
+          "path": "frontend/src/components/createStudio/editorPresets.ts",
           "operation": "modify",
-          "description": "Read tier and billing period from URL query parameters, validate against allowed values, fall back to a safe default when invalid/missing, and compute/display the exact INR amount from pricingCopy for the selected tier/period (all labels in English)."
+          "description": "Expand the preset catalog by adding more Template presets and more Texture options beyond the current arrays so users can select more high-quality variations in the editor."
         },
         {
-          "path": "frontend/src/utils/urlParams.ts",
+          "path": "frontend/src/components/createStudio/DesignEditorPanel.tsx",
           "operation": "modify",
-          "description": "Extend URL param utilities (or add small helpers) to support retrieving non-secret billing selection query params reliably across router modes, so BillingPage can consistently read tier/period."
+          "description": "Ensure the expanded Template and Texture preset lists are fully rendered/selectable in the editor UI and that selecting them continues to drive the Apply Changes flow to update previews."
         }
       ]
     },
     {
-      "id": "REQ-44",
-      "summary": "Construct a UPI deep-link that pre-fills the exact plan amount and includes a clear transaction note in English.",
+      "id": "REQ-49",
+      "summary": "Add font family selection to the Create Studio editor and apply selected font family in rendered SVG previews.",
       "acceptanceCriteria": [
-        "BillingPage constructs a UPI intent URL including at least: pa=6205684456@axl, pn=WishMint AI, cu=INR, am=<exact amount for selected plan>, and tn that includes the selected plan name and billing period (e.g., “WishMint AI Pro (Monthly)”).",
-        "The existing best-effort deep-link failure detection remains (toast guidance if the app cannot be opened).",
-        "All user-facing strings introduced/changed for this flow are in English."
+        "The editor UI (DesignEditorPanel) includes a new control for choosing a font family (English UI labels).",
+        "Selecting a font family and applying changes updates the generated preview image (SVG) so the font style is visibly different.",
+        "DesignCustomization and related types are extended to persist the selected font family per design (frontend/src/components/createStudio/types.ts).",
+        "If no font is selected, a sensible default is used and existing designs continue to render without errors."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/pages/BillingPage.tsx",
+          "path": "frontend/src/components/createStudio/types.ts",
           "operation": "modify",
-          "description": "Update the UPI intent URL generation to include pa=6205684456@axl, pn=WishMint AI, cu=INR, am=<computed exact amount>, and tn that includes the selected plan tier and billing period in English; keep the existing best-effort deep-link failure detection/toast behavior."
+          "description": "Extend DesignCustomization to persist a selected fontFamily (and any supporting types if needed) while keeping backward compatibility via a sensible default when the field is missing."
+        },
+        {
+          "path": "frontend/src/components/createStudio/editorPresets.ts",
+          "operation": "modify",
+          "description": "Add a small set of web-safe font-family preset options (no external font CDNs) that the editor can present for selection."
+        },
+        {
+          "path": "frontend/src/components/createStudio/DesignEditorPanel.tsx",
+          "operation": "modify",
+          "description": "Add an English-labeled font family control (e.g., a new tab or a section within existing controls) and wire it to the editor customization state so Apply Changes includes the chosen font family."
+        },
+        {
+          "path": "frontend/src/utils/designPreview.ts",
+          "operation": "modify",
+          "description": "Apply the selected font family to the SVG output (both <text> elements and any foreignObject HTML text styling) with a default when unset, ensuring visible font changes across Invitation/Birthday/Wedding and other occasions."
         }
       ]
     },
     {
-      "id": "REQ-45",
-      "summary": "Add a frontend-driven auto-upgrade UPI flow: create an upgrade payment request before opening UPI, embed its reference in the intent, and poll UI status after returning to the app while keeping manual proof upload fallback.",
+      "id": "REQ-50",
+      "summary": "Implement functional per-design download so users can download the latest customized design with clear naming and errors.",
       "acceptanceCriteria": [
-        "Backend: add a way to create a payment request specifically for an upgrade intent that stores: user, selected plan tier, billing period, expected amount, status, and timestamp (and any reference used in the UPI link).",
-        "Frontend: on “Pay with UPI”, call the backend to create this upgrade payment request before redirecting to the UPI app, and include a request reference in the UPI intent (e.g., in tn/tr fields).",
-        "Backend: add logic that marks the request as approved automatically after ~60 seconds and upgrades the user’s plan accordingly (so the UI can observe the upgrade).",
-        "Frontend: after returning to the app (e.g., tab refocus/visibilitychange), BillingPage shows an English status such as “Checking payment status…” and polls/refreshes until either (a) the plan becomes active or (b) a reasonable timeout is reached; success state is shown when the plan is unlocked.",
-        "The existing manual proof upload flow remains available as a fallback path (users can still submit transaction ID + optional screenshot)."
+        "The “Download” button in the generated design card grid (frontend/src/pages/CreateStudioPage.tsx) triggers a real download instead of doing nothing.",
+        "Downloaded file name is readable and includes the occasion and/or design title (e.g., \"Birthday-Design-1.png\").",
+        "The downloaded content reflects the latest applied customizations (template/texture/emojis/font, etc.) for that design.",
+        "If download fails for any reason, the user sees a clear English error toast/message and can retry."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/backend.d.ts",
+          "path": "frontend/src/pages/CreateStudioPage.tsx",
           "operation": "modify",
-          "description": "Update frontend backend type declarations to include the new backend capabilities needed for the upgrade-intent payment request creation and status querying used by the UPI auto-upgrade flow (keep names aligned with the backend implementation so the frontend can compile)."
-        },
-        {
-          "path": "frontend/src/hooks/useQueries.ts",
-          "operation": "modify",
-          "description": "Add React Query hooks/mutations for (a) creating an upgrade-intent payment request prior to opening UPI and (b) querying that request’s status by reference, to support BillingPage polling/refresh logic."
-        },
-        {
-          "path": "frontend/src/pages/BillingPage.tsx",
-          "operation": "modify",
-          "description": "On “Pay with UPI”, call the backend (via a new React Query mutation) to create an upgrade-intent payment request for the selected tier/period/amount; include the returned request reference in the UPI intent (e.g., appended to tn and/or tr); after tab refocus/visibilitychange, show an English “Checking payment status…” state and poll until plan activation is observed or a timeout occurs; keep the existing ManualUpiPaymentRequestDialog fallback available and unchanged in the UI."
-        },
-        {
-          "path": "frontend/src/components/billing/ManualUpiPaymentRequestDialog.tsx",
-          "operation": "modify",
-          "description": "Ensure the manual proof upload + submission flow remains fully accessible as a fallback from BillingPage during/after the auto-upgrade flow (no removal of existing fields/behavior; English labels only if any text changes are needed)."
+          "description": "Wire the Download button to a real browser download flow using the design’s current rendered imageUrl (SVG data URL) and generate a readable filename including occasion/title (prefer .png export via SVG-to-canvas render; fall back safely if needed). Show a clear English toast on failure and allow retry."
         }
       ]
     },
     {
-      "id": "REQ-46",
-      "summary": "Fetch the caller plan from backend state via a React Query hook and sync planStore so feature gating follows backend state after auto-approval.",
+      "id": "REQ-51",
+      "summary": "Add at least two additional customization controls (beyond template/style/texture/emojis) that persist per design and visibly affect preview output.",
       "acceptanceCriteria": [
-        "Backend exposes a query to fetch the caller’s current plan tier and billing period (as stored on the backend).",
-        "Backend updates the stored plan immediately when an upgrade payment request is auto-approved.",
-        "Frontend adds a React Query hook (in frontend/src/hooks/useQueries.ts) to fetch the caller plan from the backend actor.",
-        "Frontend updates UI gating by syncing planStore from backend plan query results (e.g., on app load and after payment flow completes), without editing any immutable hook paths listed in SYSTEM_CONTEXT."
+        "The design editor includes at least two additional customization controls beyond the current ones (Templates/Style/Texture/Emojis), with English labels.",
+        "Applying these additional controls results in a visible change to the design preview after “Apply Changes.”",
+        "New customization fields are persisted per design in the in-memory generatedPreviews state so reopening the editor shows the current selections.",
+        "No regressions: existing controls (template/style/texture/emojis) still work as before."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/backend.d.ts",
+          "path": "frontend/src/components/createStudio/types.ts",
           "operation": "modify",
-          "description": "Update frontend backend type declarations to include the backend capability for fetching the caller’s current plan tier and billing period, as required by the new plan query hook."
+          "description": "Add new DesignCustomization fields for at least two additional controls (e.g., accentColor and borderStyle/cornerRadius) with defaults to prevent regressions and ensure existing designs render without errors."
         },
         {
-          "path": "frontend/src/hooks/useQueries.ts",
+          "path": "frontend/src/components/createStudio/DesignEditorPanel.tsx",
           "operation": "modify",
-          "description": "Add a React Query hook to fetch the caller’s current plan from the backend actor (enabled only when actor is available) and expose a stable queryKey suitable for invalidation after payment completion."
+          "description": "Add at least two new English-labeled customization controls, wire them into the local customization state, and ensure the state initializes from design.customization so reopening the editor reflects current selections."
         },
         {
-          "path": "frontend/src/components/layout/AppLayout.tsx",
+          "path": "frontend/src/pages/CreateStudioPage.tsx",
           "operation": "modify",
-          "description": "Wire planStore syncing at the app layout level: when the backend caller-plan query resolves/changes, update the persisted Zustand planStore (tier and billingPeriod) so all gated pages/components reflect backend state."
+          "description": "Ensure Apply Changes continues to persist the expanded customization object into the generatedPreviews state (so customizations remain attached to the design in memory) and no existing editor controls regress."
         },
         {
-          "path": "frontend/src/state/planStore.ts",
+          "path": "frontend/src/utils/designPreview.ts",
           "operation": "modify",
-          "description": "Extend the Zustand planStore with a single helper setter that can atomically sync both tier and billingPeriod from backend query results (to avoid inconsistent intermediate UI gating)."
-        },
-        {
-          "path": "frontend/src/pages/BillingPage.tsx",
-          "operation": "modify",
-          "description": "After the auto-upgrade polling detects success (or when returning from UPI), invalidate/refetch the backend caller-plan query and sync the store so BillingPage and other gated areas reflect the newly activated plan."
+          "description": "Update SVG generation to reflect the new customization controls with visible changes (e.g., apply accent color to key elements and apply border/corner styling) while keeping existing template/style/texture/emojis behavior intact."
         }
       ]
     }

@@ -10,10 +10,10 @@ import UserApproval "user-approval/approval";
 import MixinAuthorization "authorization/MixinAuthorization";
 import MixinStorage "blob-storage/Mixin";
 import Storage "blob-storage/Storage";
-import Migration "migration";
+
 
 // Contains all state, needs with clause to initialize new field on upgrade.
-(with migration = Migration.run)
+
 actor {
   // Initialize access control state.
   let accessControlState = Auth.initState();

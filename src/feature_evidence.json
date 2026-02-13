@@ -2,12 +2,12 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-update-the-pricing-billing-upgrade-navigation-so-billingpage-knows-which-plan-tier-and-billing-period-the-user-selected-pro-business-and-monthly-yearly-using-url-parameters-and-english-user-facing-text",
-      "featureTitle": "Update the Pricing → Billing upgrade navigation so BillingPage knows which plan tier and billing period the user selected (Pro/Business and Monthly/Yearly), using URL parameters and English user-facing text.",
+      "featureId": "feature-expand-create-studio-s-procedural-generator-and-preset-catalog-so-users-have-more-high-quality-design-variations-templates-and-textures-when-generating-invitation-birthday-wedding-cards",
+      "featureTitle": "Expand Create Studio’s procedural generator and preset catalog so users have more high-quality design variations, templates, and textures when generating Invitation/Birthday/Wedding cards.",
       "files": [
-        "frontend/src/pages/BillingPage.tsx",
-        "frontend/src/pages/PricingPage.tsx",
-        "frontend/src/utils/urlParams.ts"
+        "frontend/src/components/createStudio/DesignEditorPanel.tsx",
+        "frontend/src/components/createStudio/editorPresets.ts",
+        "frontend/src/utils/designPreview.ts"
       ],
       "components": [
         "authorization@4.0.0",
@@ -20,15 +20,18 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-43"
+        "REQ-48"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-update-the-upi-deep-link-on-billingpage-so-clicking-the-payment-option-opens-the-user-s-installed-upi-app-with-the-exact-plan-amount-prefilled-am-and-a-clear-transaction-note-tn-using-upi-id-6205684456-axl-and-currency-inr",
-      "featureTitle": "Update the UPI deep-link on BillingPage so clicking the payment option opens the user’s installed UPI app with the exact plan amount prefilled (am) and a clear transaction note (tn), using UPI ID 6205684456@axl and currency INR.",
+      "featureId": "feature-add-font-family-selection-to-the-create-studio-editor-and-ensure-font-selection-is-applied-to-the-rendered-design-preview-for-generated-cards-invitation-birthday-wedding-and-other-occasions",
+      "featureTitle": "Add font family selection to the Create Studio editor and ensure font selection is applied to the rendered design preview for generated cards (Invitation/Birthday/Wedding and other occasions).",
       "files": [
-        "frontend/src/pages/BillingPage.tsx"
+        "frontend/src/components/createStudio/DesignEditorPanel.tsx",
+        "frontend/src/components/createStudio/editorPresets.ts",
+        "frontend/src/components/createStudio/types.ts",
+        "frontend/src/utils/designPreview.ts"
       ],
       "components": [
         "authorization@4.0.0",
@@ -41,17 +44,15 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-44"
+        "REQ-49"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-implement-an-automatic-upi-upgrade-flow-when-a-logged-in-user-clicks-pay-with-upi-create-a-backend-payment-request-tied-to-the-selected-plan-and-amount-include-its-reference-in-the-upi-intent-and-automatically-approve-activate-the-plan-within-1-minute-without-requiring-manual-admin-approval",
-      "featureTitle": "Implement an automatic UPI upgrade flow: when a logged-in user clicks “Pay with UPI”, create a backend payment request tied to the selected plan and amount, include its reference in the UPI intent, and automatically approve/activate the plan within ~1 minute (without requiring manual admin approval).",
+      "featureId": "feature-implement-a-functional-download-action-for-each-generated-design-so-users-can-download-the-final-customized-invitation-birthday-wedding-card-design-after-editing",
+      "featureTitle": "Implement a functional “Download” action for each generated design so users can download the final customized Invitation/Birthday/Wedding card design after editing.",
       "files": [
-        "frontend/src/components/billing/ManualUpiPaymentRequestDialog.tsx",
-        "frontend/src/hooks/useQueries.ts",
-        "frontend/src/pages/BillingPage.tsx"
+        "frontend/src/pages/CreateStudioPage.tsx"
       ],
       "components": [
         "authorization@4.0.0",
@@ -64,18 +65,18 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-45"
+        "REQ-50"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-add-backend-plan-persistence-and-a-frontend-query-hook-so-plan-gating-is-driven-by-backend-state-after-auto-approval-instead-of-relying-only-on-the-persisted-frontend-zustand-planstore",
-      "featureTitle": "Add backend plan persistence and a frontend query hook so plan gating is driven by backend state after auto-approval (instead of relying only on the persisted frontend Zustand planStore).",
+      "featureId": "feature-add-a-small-set-of-additional-create-studio-customization-controls-more-things-that-improve-invitation-card-editing-beyond-the-current-template-style-texture-emojis-and-ensure-they-affect-the-preview-output-when-applied",
+      "featureTitle": "Add a small set of additional Create Studio customization controls (“more things”) that improve invitation/card editing beyond the current template/style/texture/emojis, and ensure they affect the preview output when applied.",
       "files": [
-        "frontend/src/components/layout/AppLayout.tsx",
-        "frontend/src/hooks/useQueries.ts",
-        "frontend/src/pages/BillingPage.tsx",
-        "frontend/src/state/planStore.ts"
+        "frontend/src/components/createStudio/DesignEditorPanel.tsx",
+        "frontend/src/components/createStudio/types.ts",
+        "frontend/src/pages/CreateStudioPage.tsx",
+        "frontend/src/utils/designPreview.ts"
       ],
       "components": [
         "authorization@4.0.0",
@@ -88,7 +89,7 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-46"
+        "REQ-51"
       ],
       "confidence": "high"
     }

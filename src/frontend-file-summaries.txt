@@ -15,7 +15,7 @@
   "frontend/src/components/auth/ProfileSetupModal.tsx": "Modal dialog for first-time user profile creation with name, username, bio, and category fields using backend saveCallerUserProfile.",
   "frontend/src/components/auth/AccessDeniedScreen.tsx": "Full-page access denied screen for non-admin users attempting to access restricted areas like /admin.",
   "frontend/src/pages/HomePage.tsx": "Landing page with hero section, quick demo, 8 feature cards, testimonials, and CTAs to Create Studio and Marketplace.",
-  "frontend/src/pages/CreateStudioPage.tsx": "Create Studio page with design generation form and preview grid; clicking Edit on any generated design opens the DesignEditorPanel overlay, applies customizations to the selected design, and preserves all generated previews.",
+  "frontend/src/pages/CreateStudioPage.tsx": "Create Studio page with design generation form producing 6 previews, editor panel integration for customization, and working download functionality that converts SVG designs to high-quality PNG files with readable filenames.",
   "frontend/src/pages/TemplatesPage.tsx": "Template gallery with grid layout showing free/paid templates that navigate to Create Studio with preloaded template data.",
   "frontend/src/pages/MarketplacePage.tsx": "Marketplace page with premium upgrade gate for free tier users, featuring pill label, headline/subtitle, upgrade lock card, search input, type filter, and plan-based purchase gating that routes to /pricing when locked.",
   "frontend/src/pages/PublishPage.tsx": "Creator publishing interface for uploading templates with type selection, preview image upload, title/description, and pricing fields.",
@@ -33,10 +33,10 @@
   "frontend/src/pages/LegalRefundPage.tsx": "Refund policy page detailing 7-day money-back guarantee, eligibility, request process, subscription cancellations, and marketplace template refunds.",
   "frontend/src/pages/AdminPage.tsx": "Admin panel with user approval management, analytics dashboard cards, and tabbed interface including the new PaymentRequestsCard component in the Payments tab with role-based access control.",
   "frontend/src/pages/NotFoundPage.tsx": "404 error page with large 404 text, helpful message, and navigation buttons to home and marketplace with clean centered layout.",
-  "frontend/src/utils/designPreview.ts": "Extended design preview generator with applyCustomization function that regenerates SVG designs based on template, style, texture, and emoji selections, producing visually distinct outputs.",
-  "frontend/src/components/createStudio/types.ts": "TypeScript type definitions for design previews, customization options (template, style, texture, emojis), and editor presets used across Create Studio components.",
-  "frontend/src/components/createStudio/editorPresets.ts": "Preset data for editor customization options including 5 template presets, 5 style options, 6 texture patterns, and 12 default emojis for quick selection.",
-  "frontend/src/components/createStudio/DesignEditorPanel.tsx": "Full-screen editor panel component with tabbed interface for Templates, Style, Texture, and Emojis customization, showing design preview alongside controls with Apply/Cancel actions.",
+  "frontend/src/utils/designPreview.ts": "Extended design preview generator producing 6 distinct layout variants with support for font family, accent color, border style, and 12 texture patterns applied to SVG-based card designs.",
+  "frontend/src/components/createStudio/types.ts": "TypeScript type definitions for design previews and customization options including template, style, texture, emojis, fontFamily, accentColor, and borderStyle with supporting interfaces for editor presets.",
+  "frontend/src/components/createStudio/editorPresets.ts": "Expanded preset data catalog with 10 template presets, 12 texture patterns, 8 font options, 9 accent color choices, and 7 border style options for rich design customization.",
+  "frontend/src/components/createStudio/DesignEditorPanel.tsx": "Full-screen editor panel with three-tab interface (Templates/Style/Customize) for comprehensive design customization including templates, textures, fonts, text styles, emojis, accent colors, and border styles with live preview and Apply/Cancel actions.",
   "frontend/index.html": "Root HTML document with Google Analytics (GA4) gtag.js snippet for measurement ID G-XQQQ1HCG24 in the head section, followed by the React app mount point and module script.",
   "frontend/src/pages/CommunityPage.tsx": "Community page with All Posts/Following tabs, empty state card, loading/error states, and Create Post button that opens a dialog for authenticated users.",
   "frontend/src/components/community/CommunityPostCard.tsx": "Reusable post card component displaying author avatar with initials, name, username, timestamp, title, content, tags, and professional badge.",
@@ -45,5 +45,5 @@
   "frontend/src/components/admin/PaymentRequestsCard.tsx": "Admin payment requests card component with segmented filters (All/Pending/Approved/Rejected), table view of payment requests with screenshot links, status badges, approve/reject actions using variant type status handling, and loading/error/empty states.",
   "frontend/src/components/billing/ManualUpiPaymentRequestDialog.tsx": "Dialog component for manual UPI payment proof submission with transaction ID input, optional screenshot upload, and selected plan display; remains available as fallback during auto-upgrade flow.",
   "frontend/src/backend.d.ts": "Updated TypeScript interface declarations for backend with PaymentStatus enum and all methods including upiAutoApprove and getUserPlan for the auto-upgrade flow.",
-  "frontend/src/utils/urlParams.ts": "URL parameter utilities extended with getBillingSelectionFromUrl helper to extract tier and billing period query params for the pricing-to-billing flow."
+  "frontend/src/utils/urlParams.ts": "URL parameter utilities for parsing query strings and hash-based routing with session storage persistence, including the getBillingSelectionFromUrl helper for extracting tier and billing period from URL params."
 }

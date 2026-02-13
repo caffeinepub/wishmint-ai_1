@@ -10,6 +10,9 @@ export interface DesignCustomization {
   style: string;
   texture: string;
   emojis: string[];
+  fontFamily?: string;
+  accentColor?: string;
+  borderStyle?: string;
 }
 
 export interface EditorPreset {
@@ -28,4 +31,22 @@ export interface TextureOption {
   id: string;
   name: string;
   pattern: string;
+}
+
+export interface FontOption {
+  id: string;
+  name: string;
+  family: string;
+}
+
+export interface ColorOption {
+  id: string;
+  name: string;
+  value: string;
+}
+
+export interface BorderOption {
+  id: string;
+  name: string;
+  value: string;
 }

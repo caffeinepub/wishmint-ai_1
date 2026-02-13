@@ -8,7 +8,15 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 import { X, Plus, Check } from 'lucide-react';
 import { DesignPreview, DesignCustomization } from './types';
-import { templatePresets, styleOptions, textureOptions, defaultEmojis } from './editorPresets';
+import { 
+  templatePresets, 
+  styleOptions, 
+  textureOptions, 
+  defaultEmojis,
+  fontOptions,
+  accentColorOptions,
+  borderStyleOptions
+} from './editorPresets';
 
 interface DesignEditorPanelProps {
   design: DesignPreview;
@@ -23,6 +31,9 @@ export default function DesignEditorPanel({ design, onClose, onApply }: DesignEd
       style: 'bold',
       texture: 'none',
       emojis: [],
+      fontFamily: 'Arial, sans-serif',
+      accentColor: 'default',
+      borderStyle: 'none',
     }
   );
 
@@ -38,6 +49,18 @@ export default function DesignEditorPanel({ design, onClose, onApply }: DesignEd
 
   const handleTextureChange = (textureId: string) => {
     setCustomization({ ...customization, texture: textureId });
+  };
+
+  const handleFontChange = (fontFamily: string) => {
+    setCustomization({ ...customization, fontFamily });
+  };
+
+  const handleAccentColorChange = (accentColor: string) => {
+    setCustomization({ ...customization, accentColor });
+  };
+
+  const handleBorderStyleChange = (borderStyle: string) => {
+    setCustomization({ ...customization, borderStyle });
   };
 
   const handleAddEmoji = () => {
@@ -102,170 +125,244 @@ export default function DesignEditorPanel({ design, onClose, onApply }: DesignEd
             <ScrollArea className="flex-1">
               <div className="p-6">
                 <Tabs defaultValue="templates" className="w-full">
-                  <TabsList className="grid w-full grid-cols-4">
+                  <TabsList className="grid w-full grid-cols-3">
                     <TabsTrigger value="templates">Templates</TabsTrigger>
                     <TabsTrigger value="style">Style</TabsTrigger>
-                    <TabsTrigger value="texture">Texture</TabsTrigger>
-                    <TabsTrigger value="emojis">Emojis</TabsTrigger>
+                    <TabsTrigger value="customize">Customize</TabsTrigger>
                   </TabsList>
 
                   {/* Templates Tab */}
                   <TabsContent value="templates" className="space-y-4 mt-4">
-                    <div>
-                      <h3 className="text-lg font-semibold mb-3">Choose a Template</h3>
-                      <div className="grid grid-cols-1 gap-3">
-                        {templatePresets.map((preset) => (
-                          <Card
-                            key={preset.id}
-                            className={`cursor-pointer transition-all hover:shadow-md ${
-                              customization.template === preset.id
-                                ? 'ring-2 ring-primary'
-                                : ''
-                            }`}
-                            onClick={() => handleTemplateChange(preset.id)}
-                          >
-                            <CardHeader className="p-4">
-                              <div className="flex items-center justify-between">
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Choose Template</CardTitle>
+                        <CardDescription>Select a layout style for your design</CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="grid grid-cols-2 gap-3">
+                          {templatePresets.map((template) => (
+                            <button
+                              key={template.id}
+                              onClick={() => handleTemplateChange(template.id)}
+                              className={`p-4 border rounded-lg text-left transition-all hover:border-primary ${
+                                customization.template === template.id
+                                  ? 'border-primary bg-primary/5'
+                                  : 'border-border'
+                              }`}
+                            >
+                              <div className="flex items-start justify-between">
                                 <div>
-                                  <CardTitle className="text-base">{preset.name}</CardTitle>
-                                  <CardDescription className="text-sm">
-                                    {preset.description}
-                                  </CardDescription>
+                                  <p className="font-medium">{template.name}</p>
+                                  <p className="text-xs text-muted-foreground mt-1">
+                                    {template.description}
+                                  </p>
                                 </div>
-                                {customization.template === preset.id && (
-                                  <Check className="h-5 w-5 text-primary" />
+                                {customization.template === template.id && (
+                                  <Check className="h-4 w-4 text-primary" />
                                 )}
                               </div>
-                            </CardHeader>
-                          </Card>
-                        ))}
-                      </div>
-                    </div>
+                            </button>
+                          ))}
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Texture</CardTitle>
+                        <CardDescription>Add background patterns</CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="grid grid-cols-3 gap-2">
+                          {textureOptions.map((texture) => (
+                            <button
+                              key={texture.id}
+                              onClick={() => handleTextureChange(texture.id)}
+                              className={`p-3 border rounded-lg text-center transition-all hover:border-primary ${
+                                customization.texture === texture.id
+                                  ? 'border-primary bg-primary/5'
+                                  : 'border-border'
+                              }`}
+                            >
+                              <p className="text-sm font-medium">{texture.name}</p>
+                            </button>
+                          ))}
+                        </div>
+                      </CardContent>
+                    </Card>
                   </TabsContent>
 
                   {/* Style Tab */}
                   <TabsContent value="style" className="space-y-4 mt-4">
-                    <div>
-                      <h3 className="text-lg font-semibold mb-3">Text Style</h3>
-                      <div className="grid grid-cols-2 gap-3">
-                        {styleOptions.map((style) => (
-                          <Button
-                            key={style.id}
-                            variant={customization.style === style.id ? 'default' : 'outline'}
-                            className="h-auto py-4"
-                            onClick={() => handleStyleChange(style.id)}
-                          >
-                            <div className="flex flex-col items-center gap-1">
-                              <span className="font-semibold">{style.name}</span>
-                            </div>
-                          </Button>
-                        ))}
-                      </div>
-                    </div>
-                  </TabsContent>
-
-                  {/* Texture Tab */}
-                  <TabsContent value="texture" className="space-y-4 mt-4">
-                    <div>
-                      <h3 className="text-lg font-semibold mb-3">Background Texture</h3>
-                      <div className="grid grid-cols-2 gap-3">
-                        {textureOptions.map((texture) => (
-                          <Button
-                            key={texture.id}
-                            variant={customization.texture === texture.id ? 'default' : 'outline'}
-                            className="h-auto py-4"
-                            onClick={() => handleTextureChange(texture.id)}
-                          >
-                            <div className="flex flex-col items-center gap-1">
-                              <span className="font-semibold">{texture.name}</span>
-                            </div>
-                          </Button>
-                        ))}
-                      </div>
-                    </div>
-                  </TabsContent>
-
-                  {/* Emojis Tab */}
-                  <TabsContent value="emojis" className="space-y-4 mt-4">
-                    <div>
-                      <h3 className="text-lg font-semibold mb-3">Add Emojis</h3>
-                      
-                      {/* Current Emojis */}
-                      {customization.emojis.length > 0 && (
-                        <div className="mb-4">
-                          <Label className="text-sm text-muted-foreground mb-2 block">
-                            Current Emojis
-                          </Label>
-                          <div className="flex flex-wrap gap-2">
-                            {customization.emojis.map((emoji, index) => (
-                              <Badge
-                                key={index}
-                                variant="secondary"
-                                className="text-lg px-3 py-1 cursor-pointer hover:bg-destructive hover:text-destructive-foreground"
-                                onClick={() => handleRemoveEmoji(emoji)}
-                              >
-                                {emoji}
-                                <X className="ml-1 h-3 w-3" />
-                              </Badge>
-                            ))}
-                          </div>
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Text Style</CardTitle>
+                        <CardDescription>Customize text appearance</CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="grid grid-cols-2 gap-3">
+                          {styleOptions.map((style) => (
+                            <button
+                              key={style.id}
+                              onClick={() => handleStyleChange(style.id)}
+                              className={`p-3 border rounded-lg text-center transition-all hover:border-primary ${
+                                customization.style === style.id
+                                  ? 'border-primary bg-primary/5'
+                                  : 'border-border'
+                              }`}
+                            >
+                              <p className="font-medium">{style.name}</p>
+                            </button>
+                          ))}
                         </div>
-                      )}
+                      </CardContent>
+                    </Card>
 
-                      {/* Add Custom Emoji */}
-                      <div className="space-y-2">
-                        <Label htmlFor="emoji-input">Add Custom Emoji</Label>
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Font Family</CardTitle>
+                        <CardDescription>Choose a font for your text</CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="grid grid-cols-2 gap-2">
+                          {fontOptions.map((font) => (
+                            <button
+                              key={font.id}
+                              onClick={() => handleFontChange(font.family)}
+                              className={`p-3 border rounded-lg text-center transition-all hover:border-primary ${
+                                customization.fontFamily === font.family
+                                  ? 'border-primary bg-primary/5'
+                                  : 'border-border'
+                              }`}
+                              style={{ fontFamily: font.family }}
+                            >
+                              <p className="text-sm font-medium">{font.name}</p>
+                            </button>
+                          ))}
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Emojis</CardTitle>
+                        <CardDescription>Add decorative emojis</CardDescription>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
                         <div className="flex gap-2">
                           <Input
-                            id="emoji-input"
                             value={newEmoji}
                             onChange={(e) => setNewEmoji(e.target.value)}
-                            placeholder="Type or paste emoji..."
-                            onKeyDown={(e) => {
-                              if (e.key === 'Enter') {
-                                e.preventDefault();
-                                handleAddEmoji();
-                              }
-                            }}
+                            placeholder="Add custom emoji"
+                            className="flex-1"
                           />
                           <Button onClick={handleAddEmoji} size="icon">
                             <Plus className="h-4 w-4" />
                           </Button>
                         </div>
-                      </div>
 
-                      {/* Quick Add Emojis */}
-                      <div className="mt-4">
-                        <Label className="text-sm text-muted-foreground mb-2 block">
-                          Quick Add
-                        </Label>
-                        <div className="flex flex-wrap gap-2">
-                          {defaultEmojis.map((emoji, index) => (
-                            <Button
-                              key={index}
-                              variant="outline"
-                              size="sm"
-                              className="text-xl px-3 py-2 h-auto"
-                              onClick={() => handleAddDefaultEmoji(emoji)}
-                              disabled={customization.emojis.includes(emoji)}
+                        {customization.emojis.length > 0 && (
+                          <div className="flex flex-wrap gap-2">
+                            {customization.emojis.map((emoji, index) => (
+                              <Badge
+                                key={index}
+                                variant="secondary"
+                                className="text-lg cursor-pointer hover:bg-destructive/10"
+                                onClick={() => handleRemoveEmoji(emoji)}
+                              >
+                                {emoji} <X className="h-3 w-3 ml-1" />
+                              </Badge>
+                            ))}
+                          </div>
+                        )}
+
+                        <div className="space-y-2">
+                          <Label>Quick Add</Label>
+                          <div className="flex flex-wrap gap-2">
+                            {defaultEmojis.map((emoji) => (
+                              <button
+                                key={emoji}
+                                onClick={() => handleAddDefaultEmoji(emoji)}
+                                className="text-2xl hover:scale-110 transition-transform"
+                                disabled={customization.emojis.includes(emoji)}
+                              >
+                                {emoji}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </TabsContent>
+
+                  {/* Customize Tab */}
+                  <TabsContent value="customize" className="space-y-4 mt-4">
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Accent Color</CardTitle>
+                        <CardDescription>Choose a color theme</CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="grid grid-cols-3 gap-2">
+                          {accentColorOptions.map((color) => (
+                            <button
+                              key={color.id}
+                              onClick={() => handleAccentColorChange(color.value)}
+                              className={`p-3 border rounded-lg text-center transition-all hover:border-primary ${
+                                customization.accentColor === color.value
+                                  ? 'border-primary bg-primary/5'
+                                  : 'border-border'
+                              }`}
                             >
-                              {emoji}
-                            </Button>
+                              <div className="flex items-center justify-center gap-2">
+                                {color.value !== 'default' && (
+                                  <div
+                                    className="w-4 h-4 rounded-full border"
+                                    style={{ backgroundColor: color.value }}
+                                  />
+                                )}
+                                <p className="text-sm font-medium">{color.name}</p>
+                              </div>
+                            </button>
                           ))}
                         </div>
-                      </div>
-                    </div>
+                      </CardContent>
+                    </Card>
+
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Border Style</CardTitle>
+                        <CardDescription>Add decorative borders</CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="grid grid-cols-2 gap-2">
+                          {borderStyleOptions.map((border) => (
+                            <button
+                              key={border.id}
+                              onClick={() => handleBorderStyleChange(border.value)}
+                              className={`p-3 border rounded-lg text-center transition-all hover:border-primary ${
+                                customization.borderStyle === border.value
+                                  ? 'border-primary bg-primary/5'
+                                  : 'border-border'
+                              }`}
+                            >
+                              <p className="text-sm font-medium">{border.name}</p>
+                            </button>
+                          ))}
+                        </div>
+                      </CardContent>
+                    </Card>
                   </TabsContent>
                 </Tabs>
               </div>
             </ScrollArea>
 
             {/* Footer Actions */}
-            <div className="p-4 border-t flex gap-2 justify-end">
-              <Button variant="outline" onClick={onClose}>
+            <div className="p-4 border-t flex gap-2">
+              <Button variant="outline" onClick={onClose} className="flex-1">
                 Cancel
               </Button>
-              <Button onClick={handleApply}>
+              <Button onClick={handleApply} className="flex-1">
                 Apply Changes
               </Button>
             </div>
