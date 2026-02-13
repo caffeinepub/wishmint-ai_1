@@ -1,0 +1,57 @@
+{
+  "kind": "coverage_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-13T05:33:43.054Z",
+  "sources": {
+    "buildRequest": true,
+    "implementationPlan": true
+  },
+  "requirements": {
+    "total": 2,
+    "implemented": 2,
+    "items": [
+      {
+        "id": "REQ-26",
+        "summary": "Add a UPI app redirect (deep-link) in the plan upgrade payment flow so that when a user chooses to upgrade and clicks the payment option, the app opens the user’s installed UPI app to complete the payment using the existing UPI ID 6205684456@axl, then returns the user back to the Billing page to continue the existing proof upload / pending approval flow.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/pages/BillingPage.tsx",
+          "frontend/src/pages/BillingPage.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/BillingPage.tsx",
+          "frontend/src/pages/BillingPage.tsx"
+        ]
+      },
+      {
+        "id": "REQ-27",
+        "summary": "Update the Create Studio Generate Designs action so that after the user clicks \"Generate Designs\" and generation completes, generated design images are rendered in the results area (replacing the current placeholder message), with at least one visible preview image displayed.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/pages/CreateStudioPage.tsx",
+          "frontend/src/pages/CreateStudioPage.tsx",
+          "frontend/src/utils/designPreview.ts"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/CreateStudioPage.tsx",
+          "frontend/src/pages/CreateStudioPage.tsx",
+          "frontend/src/utils/designPreview.ts"
+        ]
+      }
+    ]
+  },
+  "changedFiles": [
+    "build-request.json",
+    "build-template/README.md",
+    "feature_evidence.json",
+    "frontend-file-summaries.txt",
+    "frontend-implementation-plan.json",
+    "frontend/src/pages/BillingPage.tsx",
+    "frontend/src/pages/CreateStudioPage.tsx",
+    "frontend/src/utils/designPreview.ts",
+    "project_state.json",
+    "scratch/component-selection.json",
+    "spec.md",
+    "spec_vs_diff_report.json"
+  ]
+}

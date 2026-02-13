@@ -1,0 +1,25 @@
+{
+  "kind": "spec_vs_diff_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-13T05:33:43.051Z",
+  "summary": "REQ-26 appears implemented by adding a UPI deep-link handler in BillingPage using pa=6205684456@axl and showing an English toast on likely deep-link failure. REQ-27 appears implemented by adding generated preview state and rendering logic fed by a new preview generator; however, the diff shows generation is simulated client-side via setTimeout rather than integrating with an actual generation-completes event.",
+  "missing_requirements": [],
+  "hallucinated_features": [
+    {
+      "description": "Client-side simulated design generation with deterministic SVG data-URL previews (3 variations) instead of using whatever existing/real generation mechanism completes.",
+      "reason": "REQ-27 asks to render generated images after generation completes, but does not request replacing the generation process with a simulated timeout and locally generated SVG previews.",
+      "evidence": [
+        "frontend/src/pages/CreateStudioPage.tsx",
+        "frontend/src/utils/designPreview.ts"
+      ]
+    }
+  ],
+  "confidence": 0.68,
+  "changed_files": [
+    "frontend-file-summaries.txt",
+    "frontend/src/pages/BillingPage.tsx",
+    "frontend/src/pages/CreateStudioPage.tsx",
+    "frontend/src/utils/designPreview.ts",
+    "project_state.json"
+  ]
+}

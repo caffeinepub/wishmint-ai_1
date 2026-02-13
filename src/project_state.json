@@ -1,0 +1,305 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 5,
+  "summary": "WishMint AI: a production-ready, premium, responsive web platform to generate AI wish cards/invitations in a Create Studio and run a creator Marketplace (buy/sell templates), with authentication, billing/payments (Razorpay + UPI fallback), creator profiles/followers/views, earnings/withdrawals, admin moderation/approvals, analytics/SEO, and full site copy.",
+  "architectural_notes": [],
+  "known_issues": [
+    "Build attempt failed due to request size/processing limits; may require breaking work into smaller milestones."
+  ],
+  "isFixRequest": false,
+  "existing_features": [
+    {
+      "id": "feature-implement-the-core-app-shell-with-a-premium-modern-minimal-theme-for-wishmint-ai-using-mint-accents-deep-dark-clean-white-subtle-textured-gradient-background-smooth-micro-interactions-strong-contrast-and-consistent-typography-across-all-pages",
+      "title": "Implement the core app shell with a premium, modern, minimal theme for WishMint AI using mint accents + deep dark + clean white, subtle textured/gradient background, smooth micro-interactions, strong contrast, and consistent typography across all pages.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-routing-and-page-skeletons-for-all-required-routes-home-create-templates-marketplace-publish-creators-creator-username-pricing-dashboard-billing-support-privacy-terms-refund-admin",
+      "title": "Add routing and page skeletons for all required routes: / (Home), /create, /templates, /marketplace, /publish, /creators, /creator/:username, /pricing, /dashboard, /billing, /support, /privacy, /terms, /refund, /admin.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-sticky-top-navigation-bar-with-logo-name-the-specified-menu-items-home-create-templates-marketplace-pricing-creators-faq-blog-contact-and-action-buttons-login-sign-up-upgrade-on-mobile-implement-a-hamburger-menu-with-smooth-open-close-and-ensure-every-item-navigates-correctly-add-a-floating-back-to-top-button",
+      "title": "Create a sticky top navigation bar with logo+name, the specified menu items (Home, Create, Templates, Marketplace, Pricing, Creators, FAQ, Blog, Contact) and action buttons (Login, Sign up, Upgrade). On mobile, implement a hamburger menu with smooth open/close and ensure every item navigates correctly. Add a floating Back-to-top button.",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-build-the-home-landing-page-with-hero-headline-subtext-and-ctas-to-create-and-marketplace-a-quick-demo-prompt-input-with-instant-preview-mock-8-feature-cards-example-gallery-testimonials-ratings-creator-spotlight-carousel-pricing-preview-faq-preview-and-a-full-footer-with-about-terms-privacy-refund-contact-social-links",
+      "title": "Build the Home (Landing) page with: hero headline/subtext and CTAs to /create and /marketplace; a quick demo (prompt input with instant preview mock); 8 feature cards; example gallery; testimonials+ratings; creator spotlight carousel; pricing preview; FAQ preview; and a full footer with About/Terms/Privacy/Refund/Contact/Social links.",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-the-create-studio-page-create-ui-including-occasion-dropdown-tone-language-recipient-name-sender-name-optional-extra-details-and-main-prompt-box-plus-action-buttons-regenerate-improve-prompt-more-formal-more-funny-add-emoji-remove-emoji",
+      "title": "Implement the Create Studio page (/create) UI including: occasion dropdown, tone, language, recipient name, sender name (optional), extra details, and main prompt box; plus action buttons (Regenerate, Improve Prompt, More Formal, More Funny, Add Emoji, Remove Emoji).",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-generate-3-6-design-variations-per-create-studio-request-using-an-internal-non-llm-procedural-generator-that-varies-layout-background-fonts-icons-emojis-and-palette-render-the-variations-as-selectable-previews",
+      "title": "Generate 3–6 design variations per Create Studio request using an internal (non-LLM) procedural generator that varies layout, background, fonts, icons/emojis, and palette; render the variations as selectable previews.",
+      "reqIds": [
+        "REQ-6"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-an-in-app-editor-for-a-selected-design-variation-edit-text-choose-font-change-color-adjust-alignment-switch-background-style-gradient-texture-pattern-add-remove-icons-emojis-stickers-and-include-export-options-with-plan-based-rules-free-low-res-jpg-watermark-pro-hd-jpg-png-pdf-no-watermark-business-brand-kit-bulk-export",
+      "title": "Add an in-app editor for a selected design variation: edit text, choose font, change color, adjust alignment; switch background style (gradient/texture/pattern); add/remove icons/emojis/stickers; and include export options with plan-based rules (Free: low-res JPG + watermark; Pro: HD JPG/PNG/PDF no watermark; Business: brand kit + bulk export).",
+      "reqIds": [
+        "REQ-7"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-create-studio-robustness-features-loading-states-error-handling-with-retry-toast-notifications-and-skeleton-loaders-where-appropriate",
+      "title": "Implement Create Studio robustness features: loading states, error handling with retry, toast notifications, and skeleton loaders where appropriate.",
+      "reqIds": [
+        "REQ-8"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-marketplace-marketplace-with-tabs-trending-new-top-rated-for-you-categories-following-category-list-listing-cards-preview-title-category-creator-price-rating-purchases-views-likes-saves-sorting-and-filters-price-rating-category-style-language-and-social-actions-like-comment-save-share-increment-views-with-real-backend-tracking",
+      "title": "Implement Marketplace (/marketplace) with tabs (Trending, New, Top Rated, For You, Categories, Following), category list, listing cards (preview, title, category, creator, price, rating, purchases, views/likes/saves), sorting and filters (price, rating, category, style, language), and social actions (like, comment, save, share). Increment views with real backend tracking.",
+      "reqIds": [
+        "REQ-10"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-templates-page-templates-with-filtering-by-occasion-style-and-clicking-a-template-opens-create-studio-with-the-template-preloaded",
+      "title": "Implement Templates page (/templates) with filtering by occasion/style and clicking a template opens Create Studio with the template preloaded.",
+      "reqIds": [
+        "REQ-11"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-publishing-flow-publish-for-creators-to-post-free-template-paid-template-ai-prompt-pack-and-custom-order-listing-include-upload-fields-preview-image-title-description-tags-category-style-language-price-licensing-and-template-data-template-json-or-structured-editable-template-info",
+      "title": "Implement publishing flow (/publish) for creators to post: free template, paid template, AI prompt pack, and custom order listing. Include upload fields: preview image, title, description, tags, category/style/language, price/licensing, and template data (template_json or structured editable template info).",
+      "reqIds": [
+        "REQ-12"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-creators-directory-creators-with-top-trending-sections-search-and-filters-and-creator-profile-page-creator-username-with-bio-social-links-optional-follower-count-total-views-sales-rating-reviews-portfolio-grid-follow-button-and-a-hire-me-inquiry-form-for-custom-orders",
+      "title": "Implement creators directory (/creators) with top/trending sections, search, and filters; and creator profile page (/creator/:username) with bio/social links (optional), follower count, total views/sales, rating/reviews, portfolio grid, Follow button, and a “Hire me” inquiry form for custom orders.",
+      "reqIds": [
+        "REQ-13"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-authentication-using-internet-identity-and-a-profile-menu-with-account-billing-my-designs-creator-dashboard-logout-session-must-persist-across-reloads",
+      "title": "Implement authentication using Internet Identity and a profile menu with: Account, Billing, My Designs, Creator Dashboard, Logout. Session must persist across reloads.",
+      "reqIds": [
+        "REQ-14"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-pricing-and-plan-gating-pricing-page-with-free-pro-business-plans-and-monthly-yearly-toggle-dashboard-with-quick-start-usage-meter-recent-designs-drafts-billing-summary-upgrade-cta-billing-showing-current-plan-upgrade-downgrade-payment-history-manage-subscription-manual-records",
+      "title": "Implement pricing and plan gating: /pricing page with Free/Pro/Business plans and monthly/yearly toggle; /dashboard with quick start, usage meter, recent designs/drafts, billing summary + upgrade CTA; /billing showing current plan, upgrade/downgrade, payment history, manage subscription (manual records).",
+      "reqIds": [
+        "REQ-15"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-manual-upi-upgrade-flow-show-upi-id-6205684456-axl-and-display-the-provided-qr-image-include-instructions-an-i-have-paid-action-that-lets-the-user-upload-a-screenshot-and-enter-transaction-id-store-status-as-pending-until-admin-approval-then-activate-plan-and-show-clear-payment-status",
+      "title": "Implement manual UPI upgrade flow: show UPI ID 6205684456@axl and display the provided QR image; include instructions, an “I have paid” action that lets the user upload a screenshot and enter transaction ID; store status as Pending until admin approval, then activate plan and show clear payment status.",
+      "reqIds": [
+        "REQ-16"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-creator-mode-onboarding-and-analytics-users-can-toggle-become-a-creator-and-complete-onboarding-fields-display-name-username-bio-category-focus-add-followers-system-following-feed-views-likes-sales-aggregates-and-creator-levels-rookie-rising-pro-elite-verified-computed-from-views-followers-sales-rating",
+      "title": "Implement creator mode onboarding and analytics: users can toggle “Become a Creator” and complete onboarding fields (display name, username, bio, category focus). Add followers system, Following feed, views/likes/sales aggregates, and creator levels (Rookie/Rising/Pro/Elite/Verified) computed from views/followers/sales/rating.",
+      "reqIds": [
+        "REQ-18"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-creator-earnings-ledger-and-withdrawals-store-gross-commission-net-per-sale-with-configurable-commission-default-15-show-creator-dashboard-with-views-graph-follower-growth-sales-stats-balance-allow-withdrawal-requests-via-upi-bank-details-with-status-workflow-pending-approved-paid-rejected-and-guardian-payout-option-for-under-18",
+      "title": "Implement creator earnings ledger and withdrawals: store gross/commission/net per sale with configurable commission (default 15%); show creator dashboard with views graph, follower growth, sales stats, balance; allow withdrawal requests via UPI/bank details with status workflow (Pending→Approved→Paid/Rejected) and guardian payout option for under-18.",
+      "reqIds": [
+        "REQ-19"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-admin-panel-admin-restricted-to-admins-manage-users-approve-reject-creator-applications-approve-reject-manual-upi-upgrades-approve-reject-marketplace-listings-handle-reports-configure-plan-limits-pricing-commission-view-basic-analytics-signups-day-active-users-conversion-top-templates-creators-and-manage-support-tickets-inbox-log-admin-actions",
+      "title": "Implement admin panel (/admin) restricted to admins: manage users, approve/reject creator applications, approve/reject manual UPI upgrades, approve/reject marketplace listings, handle reports, configure plan limits/pricing/commission %, view basic analytics (signups/day, active users, conversion, top templates/creators), and manage support tickets/inbox. Log admin actions.",
+      "reqIds": [
+        "REQ-20"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-support-contact-page-support-with-contact-form-help-center-articles-and-ticket-submission-stored-in-backend",
+      "title": "Implement Support/Contact page (/support) with contact form, help center articles, and ticket submission stored in backend.",
+      "reqIds": [
+        "REQ-22"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-legal-pages-privacy-terms-refund-with-professional-placeholder-copy-and-link-them-from-footer",
+      "title": "Create legal pages /privacy, /terms, /refund with professional placeholder copy and link them from footer.",
+      "reqIds": [
+        "REQ-23"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-seo-and-basic-analytics-set-page-titles-meta-descriptions-and-opengraph-metadata-per-route-generate-sitemap-and-robots-txt-add-internal-event-tracking-for-key-actions-create-click-upgrade-click-purchase-success-stored-in-backend-for-admin-analytics",
+      "title": "Add SEO and basic analytics: set page titles/meta descriptions and OpenGraph metadata per route; generate sitemap and robots.txt; add internal event tracking for key actions (Create click, Upgrade click, Purchase success) stored in backend for admin analytics.",
+      "reqIds": [
+        "REQ-24"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-write-and-integrate-professional-website-copy-for-home-hero-features-pricing-faqs-10-creator-onboarding-marketplace-guidelines-and-placeholders-for-refund-terms-privacy-ensure-all-user-facing-text-is-in-english",
+      "title": "Write and integrate professional website copy for: Home hero, features, pricing, FAQs (10+), creator onboarding, marketplace guidelines, and placeholders for refund/terms/privacy; ensure all user-facing text is in English.",
+      "reqIds": [
+        "REQ-25"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-upi-app-redirect-deep-link-in-the-plan-upgrade-payment-flow-so-that-when-a-user-chooses-to-upgrade-and-clicks-the-payment-option-the-app-opens-the-user-s-installed-upi-app-to-complete-the-payment-using-the-existing-upi-id-6205684456-axl-then-returns-the-user-back-to-the-billing-page-to-continue-the-existing-proof-upload-pending-approval-flow",
+      "title": "Add a UPI app redirect (deep-link) in the plan upgrade payment flow so that when a user chooses to upgrade and clicks the payment option, the app opens the user’s installed UPI app to complete the payment using the existing UPI ID 6205684456@axl, then returns the user back to the Billing page to continue the existing proof upload / pending approval flow.",
+      "reqIds": [
+        "REQ-26"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-create-studio-generate-designs-action-so-that-after-the-user-clicks-generate-designs-and-generation-completes-generated-design-images-are-rendered-in-the-results-area-replacing-the-current-placeholder-message-with-at-least-one-visible-preview-image-displayed",
+      "title": "Update the Create Studio Generate Designs action so that after the user clicks \"Generate Designs\" and generation completes, generated design images are rendered in the results area (replacing the current placeholder message), with at least one visible preview image displayed.",
+      "reqIds": [
+        "REQ-27"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "Implement premium responsive UI shell: sticky navbar (all routes work), mobile hamburger menu, back-to-top button, footer + legal/support pages",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Build Home/Landing page with hero CTAs, quick demo preview mock, feature highlights, gallery, testimonials, creator spotlight carousel, pricing/FAQ previews",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-3",
+      "summary": "Create Studio (/create): AI prompt inputs, generate 3–6 varied designs, editor tools, loading/error/retry, save drafts/My Designs, share links, export tiers",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-4",
+      "summary": "Templates page (/templates) with filtering and ability to open Create Studio with a preloaded template",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-5",
+      "summary": "Marketplace (/marketplace): feeds/tabs, listing cards, filters/sort, social actions (like/comment/save/share), real view tracking, follow creators, buy/unlock flow",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-6",
+      "summary": "Creator publishing + directory: /publish upload flow (free/paid templates, prompt packs, custom orders), creators directory (/creators), creator profiles (/creator/:username) with portfolio and hire inquiry",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-7",
+      "summary": "Authentication: email/password + Google sign-in, forgot password, persistent sessions, profile menu (Account, Billing, My Designs, Creator Dashboard, Logout)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-8",
+      "summary": "Pricing, billing, and payments: /pricing, /dashboard, /billing; plan limits; Razorpay (optional PayPal) + manual UPI fallback with screenshot upload + admin verification",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-9",
+      "summary": "Creator mode + monetization: creator onboarding, followers feed, creator levels/badges, earnings ledger with commission, withdrawals (Razorpay payouts/manual) incl. guardian payout option",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-10",
+      "summary": "Admin panel (/admin) + moderation/safety + analytics/SEO + copywriting: approvals, reports, plan/commission config, internal/GA4 tracking, sitemap/robots/meta/OG, full site copy and docs for API keys",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-19",
+      "summary": "Implement persistence for: user profiles, saved drafts, saved designs (“My Designs”), templates/posts, likes, comments, follows, views, purchases, subscriptions/plans, payments (manual), earnings ledger, payout requests, reports, and admin actions/logs using a single Motoko actor with stable storage.",
+      "reqIds": [
+        "REQ-9"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-27",
+      "summary": "Implement buy/unlock system for premium marketplace items: purchasing creates a purchase record, unlocks the template in the buyer account, allows use in Create Studio, and records license details and purchase history.",
+      "reqIds": [
+        "REQ-17"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-31",
+      "summary": "Add moderation & safety features: report button on posts/comments, basic profanity filtering for user-generated text, rate limiting on posting/comments to prevent spam, and copyright warning/takedown flow managed by admin.",
+      "reqIds": [
+        "REQ-21"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-32",
+      "summary": "Upgrade flow: after user selects a payment option for plan upgrade, redirect/deep-link to a UPI app to complete payment (UPI intent) before returning to app for status confirmation.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-33",
+      "summary": "Create Studio: after clicking Generate (generating design), render the generated image/design output in the UI (preview appears immediately when generation completes).",
+      "reqIds": [],
+      "status": "pending"
+    }
+  ],
+  "projectName": "WishMint AI",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}

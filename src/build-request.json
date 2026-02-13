@@ -1,0 +1,61 @@
+{
+  "kind": "build_request",
+  "title": "Deep-link UPI payment on upgrade and show generated design images after Generate",
+  "priority": "normal",
+  "requirements": [
+    {
+      "id": "REQ-26",
+      "text": "Add a UPI app redirect (deep-link) in the plan upgrade payment flow so that when a user chooses to upgrade and clicks the payment option, the app opens the user’s installed UPI app to complete the payment using the existing UPI ID 6205684456@axl, then returns the user back to the Billing page to continue the existing proof upload / pending approval flow.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "recent-messages-6"
+        ],
+        "quotes": [
+          "Add this When a user upgrade plans and after they click payment option and then they get redirect to upi app to pay money"
+        ]
+      },
+      "acceptanceCriteria": [
+        "On /billing, the Free-tier payment section includes a clear action (e.g., \"Pay with UPI app\") that opens a UPI deep-link (upi://pay...) using payee address 6205684456@axl.",
+        "Clicking the UPI deep-link button attempts to open a UPI app (on mobile devices) without breaking the page navigation/state.",
+        "If the browser/device blocks UPI deep-links, show an English error/toast explaining that the user can still pay by scanning the QR or using the UPI ID manually.",
+        "After the user returns to the app (manually switching back), the Billing page still shows the manual proof upload entry point (existing \"I Have Paid - Upload Proof\" flow remains available and unchanged).",
+        "All user-facing text added for this flow is in English."
+      ]
+    },
+    {
+      "id": "REQ-27",
+      "text": "Update the Create Studio Generate Designs action so that after the user clicks \"Generate Designs\" and generation completes, generated design images are rendered in the results area (replacing the current placeholder message), with at least one visible preview image displayed.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "recent-messages-6"
+        ],
+        "quotes": [
+          "After clicking generating design so now image should appear their"
+        ]
+      },
+      "acceptanceCriteria": [
+        "On /create, clicking \"Generate Designs\" shows a loading state while designs are being generated.",
+        "When generation completes, the results section displays generated design image previews (at least 1 image visible).",
+        "The previous placeholder text (\"Your generated designs will appear here...\") is not shown once previews exist.",
+        "If the user is not logged in, the existing login gating remains (prompting login and preventing generation).",
+        "If required inputs are missing (e.g., empty message), the existing validation remains and no preview is shown."
+      ]
+    }
+  ],
+  "constraints": [
+    "Do not edit files under frontend/src/components/ui (Shadcn components are read-only).",
+    "Do not edit immutable hook bootstrap files (frontend/src/hooks/useInternetIdentity.ts / .tsx, frontend/src/hooks/useActor.ts, frontend/src/main.tsx).",
+    "Backend must remain a single Motoko actor; only introduce backend changes if strictly required for these two behaviors."
+  ],
+  "nonGoals": [
+    "Implementing automatic payment verification from UPI apps (e.g., reading transaction status from a bank/UPI provider).",
+    "Adding Razorpay/PayPal or any third-party payment gateway integration beyond the requested UPI deep-link.",
+    "Redesigning the entire Create Studio editor/export system beyond making generated images appear after generation."
+  ],
+  "imageRequirements": {
+    "required": [],
+    "edits": []
+  }
+}

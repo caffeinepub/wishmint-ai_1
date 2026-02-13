@@ -1,0 +1,58 @@
+{
+  "kind": "implementation_plan",
+  "version": "1.0",
+  "title": "UPI deep-link payment action on Billing + show generated design previews after Generate",
+  "requirements": [
+    {
+      "id": "REQ-26",
+      "summary": "Add a UPI deep-link action on Billing that opens the user’s installed UPI app for payment to 6205684456@axl, with graceful fallback messaging and no disruption to the existing proof-upload flow.",
+      "acceptanceCriteria": [
+        "On /billing, the Free-tier payment section includes a clear action (e.g., \"Pay with UPI app\") that opens a UPI deep-link (upi://pay...) using payee address 6205684456@axl.",
+        "Clicking the UPI deep-link button attempts to open a UPI app (on mobile devices) without breaking the page navigation/state.",
+        "If the browser/device blocks UPI deep-links, show an English error/toast explaining that the user can still pay by scanning the QR or using the UPI ID manually.",
+        "After the user returns to the app (manually switching back), the Billing page still shows the manual proof upload entry point (existing \"I Have Paid - Upload Proof\" flow remains available and unchanged).",
+        "All user-facing text added for this flow is in English."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/BillingPage.tsx",
+          "operation": "modify",
+          "description": "Add a \"Pay with UPI app\" button in the Free-tier manual payment section that builds and opens a UPI deep-link (upi://pay...) targeting payee address 6205684456@axl; keep the existing QR + UPI ID + \"I Have Paid - Upload Proof\" entry point unchanged. Implement blocked-deeplink detection (best-effort, e.g., visibility/focus + timeout) and show an English toast error with manual alternatives when opening fails. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/pages/BillingPage.tsx",
+          "operation": "modify",
+          "description": "Wire up the existing \"Copy\" action to copy the UPI ID to clipboard and show an English toast confirming copy success/failure, reinforcing the manual payment fallback path. Verify the component's usage instructions before implementing."
+        }
+      ]
+    },
+    {
+      "id": "REQ-27",
+      "summary": "Update Create Studio so Generate Designs shows a loading state and renders generated image previews in the results area after generation completes (replacing the placeholder message).",
+      "acceptanceCriteria": [
+        "On /create, clicking \"Generate Designs\" shows a loading state while designs are being generated.",
+        "When generation completes, the results section displays generated design image previews (at least 1 image visible).",
+        "The previous placeholder text (\"Your generated designs will appear here...\") is not shown once previews exist.",
+        "If the user is not logged in, the existing login gating remains (prompting login and preventing generation).",
+        "If required inputs are missing (e.g., empty message), the existing validation remains and no preview is shown."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/CreateStudioPage.tsx",
+          "operation": "modify",
+          "description": "Introduce local state for generation lifecycle (e.g., isGenerating + generatedPreviews) and update \"Generate Designs\" to: (1) keep existing login gating and prompt validation, (2) show a loading/disabled state while generating, and (3) on completion, set at least one generated preview image URL for rendering. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/pages/CreateStudioPage.tsx",
+          "operation": "modify",
+          "description": "Replace the results placeholder card with conditional rendering: show placeholder only when no previews exist; once previews exist, render a results grid with at least one visible <img> preview (and optional basic metadata/actions if already present). Ensure the placeholder text is not shown when previews exist. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/utils/designPreview.ts",
+          "operation": "create",
+          "description": "Add a small utility to generate deterministic preview image sources (e.g., SVG data URLs) from the Create Studio inputs, so the UI can reliably render at least one 'generated design' image preview after the simulated generation completes without requiring backend changes. Verify the component's usage instructions before implementing."
+        }
+      ]
+    }
+  ]
+}
